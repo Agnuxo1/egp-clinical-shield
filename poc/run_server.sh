@@ -29,10 +29,13 @@ PY
 
 [ -f data/meddocan.zip ] || curl -sSL -o data/meddocan.zip "https://zenodo.org/records/4279323/files/meddocan.zip?download=1"
 (cd data && echo "6a09eb975580fdf56bc7041eadc9c921  meddocan.zip" | md5sum -c -)
-[ -d data/meddocan ] || "$VENV/bin/python" -c "import zipfile; zipfile.ZipFile('data/meddocan.zip').extractall('data')"
+# always extract afresh from the verified zip, so a modified local copy cannot be used
+rm -rf data/meddocan data/meddocan_noheader
+"$VENV/bin/python" -c "import zipfile; zipfile.ZipFile('data/meddocan.zip').extractall('data')"
 [ -d data/ev ] || git clone -q https://github.com/PlanTL-SANIDAD/MEDDOCAN-Evaluation-Script.git data/ev
 git -C data/ev checkout -q 843152c475e7118171028badd16f6342c5560e0f
 test "$(git -C data/ev rev-parse HEAD)" = 843152c475e7118171028badd16f6342c5560e0f
+test -z "$(git -C data/ev status --porcelain --untracked-files=no)"  # official scorer unmodified
 
 { nproc; lscpu | grep -m1 "Model name"; free -g | head -2; } > results/machine.txt
 SECONDS=0

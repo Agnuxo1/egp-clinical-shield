@@ -34,7 +34,7 @@ reply = client.chat.completions.create(model="…", messages=[{"role": "user", "
 
 - Detection in the default mode takes under 3 ms per note on a 2019 desktop CPU (Ryzen 7 3700X); no GPU and no model. Not yet measured on a laptop.
 - Masking is lossless: with an echo model every test note comes back exactly. With a real model, restoration depends on the model keeping the placeholders, which we have not measured.
-- The OpenAI and Anthropic wrappers mask every message of the conversation (earlier replies carry restored names) with one session per request, so the same person keeps the same placeholder; the mapping is destroyed even if the provider call fails. The LangChain wrapper accepts plain-text prompts only.
+- The OpenAI and Anthropic wrappers mask the text of every message and text block of the conversation (earlier replies carry restored names) with one session per request, so the same person keeps the same placeholder. Content they cannot mask (images, tool calls, extra message fields) is refused before anything is sent. The mapping is destroyed even if the provider call fails. The LangChain wrapper accepts plain-text prompts only.
 
 ## Results
 
@@ -67,7 +67,7 @@ Linux with Python 3.13 (tested on Debian 13), about 25 minutes on 4 CPU cores:
 
 ```bash
 bash poc/run_server.sh   # pinned and checked environment, MEDDOCAN (md5 checked), official scorer (commit checked), 8 systems, report, then poc/run_posthoc.sh
-python -m pytest tests   # 48 tests; the core needs no extra packages
+python -m pytest tests   # 50 tests; the core needs no extra packages
 ```
 
 `poc/run_posthoc.sh` rebuilds the stress test, the core ablation and the residual-risk tables (outputs in `poc/results_posthoc/`); re-running it reproduced every published number exactly. `poc/recount.py` recomputes metrics from saved predictions (E011). Exact environment of E007: `poc/requirements.lock.txt`.

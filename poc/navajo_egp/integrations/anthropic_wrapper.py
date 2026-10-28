@@ -24,6 +24,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from navajo_egp.integrations._masking import mask_request
+
 logger = logging.getLogger(__name__)
 
 
@@ -34,90 +36,40 @@ class _NavajoMessages:
         self._original = original_messages
         self._egp = egp
 
+    def _prepare(self, kwargs: dict) -> Any:
+        messages, system, session = mask_request(self._egp, kwargs.get("messages", []), kwargs.get("system"))
+        kwargs["messages"] = messages
+        if "system" in kwargs:
+            kwargs["system"] = system
+        return session
+
+    def _restore(self, response: Any, session: Any) -> None:
+        for block in response.content:
+            if getattr(block, "text", None):
+                block.text = self._egp.deanonymize(block.text, session)
+
     def create(self, **kwargs: Any) -> Any:
-        messages = kwargs.get("messages", [])
-        sessions: list = []
-
-        new_messages = []
-        for msg in messages:
-            content = msg.get("content")
-            if isinstance(content, str):  # user and assistant turns (E014)
-                # one session per request: the same person keeps the same placeholder in every message
-                anon_content, session = self._egp.anonymize(content, session=sessions[0] if sessions else None)
-                if not sessions:
-                    sessions.append(session)
-                new_msg = dict(msg)
-                new_msg["content"] = anon_content
-                new_messages.append(new_msg)
-            else:
-                new_messages.append(msg)
-
-        kwargs["messages"] = new_messages
-
-        # Anonymise system prompt too if present
-        system_sessions: list = []
-        if "system" in kwargs and isinstance(kwargs["system"], str):
-            anon_sys, sys_session = self._egp.anonymize(kwargs["system"], session=sessions[0] if sessions else None)
-            kwargs["system"] = anon_sys
-            if not sessions:
-                system_sessions.append(sys_session)
-
+        session = self._prepare(kwargs)
+        # the session is destroyed even if the provider call fails
         try:
             response = self._original.create(**kwargs)
-            all_sessions = system_sessions + sessions
-            for block in response.content:
-                if hasattr(block, "text") and block.text:
-                    restored = block.text
-                    for session in reversed(all_sessions):
-                        restored = self._egp.deanonymize(restored, session)
-                    block.text = restored
+            if session is not None:
+                self._restore(response, session)
         finally:
-            for session in system_sessions + sessions:
+            if session is not None:
                 session.destroy()
-
         return response
 
     async def acreate(self, **kwargs: Any) -> Any:
         """Async variant (for AsyncAnthropic)."""
-        messages = kwargs.get("messages", [])
-        sessions: list = []
-
-        new_messages = []
-        for msg in messages:
-            content = msg.get("content")
-            if isinstance(content, str):  # user and assistant turns (E014)
-                # one session per request: the same person keeps the same placeholder in every message
-                anon_content, session = self._egp.anonymize(content, session=sessions[0] if sessions else None)
-                if not sessions:
-                    sessions.append(session)
-                new_msg = dict(msg)
-                new_msg["content"] = anon_content
-                new_messages.append(new_msg)
-            else:
-                new_messages.append(msg)
-
-        kwargs["messages"] = new_messages
-
-        system_sessions: list = []
-        if "system" in kwargs and isinstance(kwargs["system"], str):
-            anon_sys, sys_session = self._egp.anonymize(kwargs["system"], session=sessions[0] if sessions else None)
-            kwargs["system"] = anon_sys
-            if not sessions:
-                system_sessions.append(sys_session)
-
+        session = self._prepare(kwargs)
         try:
             response = await self._original.acreate(**kwargs)
-            all_sessions = system_sessions + sessions
-            for block in response.content:
-                if hasattr(block, "text") and block.text:
-                    restored = block.text
-                    for session in reversed(all_sessions):
-                        restored = self._egp.deanonymize(restored, session)
-                    block.text = restored
+            if session is not None:
+                self._restore(response, session)
         finally:
-            for session in system_sessions + sessions:
+            if session is not None:
                 session.destroy()
-
         return response
 
 

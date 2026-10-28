@@ -23,6 +23,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from navajo_egp.integrations._masking import mask_request
+
 logger = logging.getLogger(__name__)
 
 
@@ -33,75 +35,33 @@ class _NavajoChatCompletions:
         self._original = original_completions
         self._egp = egp
 
+    def _restore(self, response: Any, session: Any) -> None:
+        for choice in response.choices:
+            if getattr(choice.message, "content", None):
+                choice.message.content = self._egp.deanonymize(choice.message.content, session)
+
     def create(self, **kwargs: Any) -> Any:
-        messages = kwargs.get("messages", [])
-        sessions: list = []
-
-        # Anonymise every message that carries text
-        new_messages = []
-        for msg in messages:
-            # every role, assistant included: earlier replies carry restored real names (E014)
-            if isinstance(msg.get("content"), str):
-                # one session per request: the same person keeps the same placeholder in every message
-                anon_content, session = self._egp.anonymize(msg["content"], session=sessions[0] if sessions else None)
-                if not sessions:
-                    sessions.append(session)
-                new_msg = dict(msg)
-                new_msg["content"] = anon_content
-                new_messages.append(new_msg)
-            else:
-                new_messages.append(msg)
-
-        kwargs["messages"] = new_messages
-
-        # Call the real API and restore the reply; sessions are destroyed even if the call fails
+        kwargs["messages"], _, session = mask_request(self._egp, kwargs.get("messages", []))
+        # the session is destroyed even if the provider call fails
         try:
             response = self._original.create(**kwargs)
-            for choice in response.choices:
-                if hasattr(choice.message, "content") and choice.message.content:
-                    restored = choice.message.content
-                    for session in reversed(sessions):
-                        restored = self._egp.deanonymize(restored, session)
-                    choice.message.content = restored
+            if session is not None:
+                self._restore(response, session)
         finally:
-            for session in sessions:
+            if session is not None:
                 session.destroy()
-
         return response
 
     async def acreate(self, **kwargs: Any) -> Any:
         """Async variant."""
-        messages = kwargs.get("messages", [])
-        sessions: list = []
-
-        new_messages = []
-        for msg in messages:
-            # every role, assistant included: earlier replies carry restored real names (E014)
-            if isinstance(msg.get("content"), str):
-                # one session per request: the same person keeps the same placeholder in every message
-                anon_content, session = self._egp.anonymize(msg["content"], session=sessions[0] if sessions else None)
-                if not sessions:
-                    sessions.append(session)
-                new_msg = dict(msg)
-                new_msg["content"] = anon_content
-                new_messages.append(new_msg)
-            else:
-                new_messages.append(msg)
-
-        kwargs["messages"] = new_messages
-
+        kwargs["messages"], _, session = mask_request(self._egp, kwargs.get("messages", []))
         try:
             response = await self._original.acreate(**kwargs)
-            for choice in response.choices:
-                if hasattr(choice.message, "content") and choice.message.content:
-                    restored = choice.message.content
-                    for session in reversed(sessions):
-                        restored = self._egp.deanonymize(restored, session)
-                    choice.message.content = restored
+            if session is not None:
+                self._restore(response, session)
         finally:
-            for session in sessions:
+            if session is not None:
                 session.destroy()
-
         return response
 
 

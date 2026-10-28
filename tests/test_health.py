@@ -131,6 +131,56 @@ def test_anthropic_history_is_masked():
     assert not any("Ferrer Molina" in m for m in received[0])
 
 
+def test_structured_text_blocks_are_masked():
+    """E015: lists of text blocks (OpenAI and Anthropic formats) are masked with the same session."""
+    from types import SimpleNamespace
+    from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
+    from navajo_egp.integrations.anthropic_wrapper import NavajoAnthropic
+    from deid.shield import ClinicalShield
+
+    blocks = [{"type": "text", "text": NOTE}, {"type": "text", "text": "Contact: lucia.ferrer@example.com"}]
+    received = []
+    NavajoOpenAI(_fake_openai(received), ClinicalShield()).chat.completions.create(
+        model="any", messages=[{"role": "user", "content": blocks}])
+    sent = " ".join(b["text"] for b in received[0][0])
+    assert "Ferrer Molina" not in sent and "lucia.ferrer@example.com" not in sent and "65 años" in sent
+
+    got = []
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            got.append(kwargs)
+            return SimpleNamespace(content=[SimpleNamespace(text="ok")])
+
+    NavajoAnthropic(SimpleNamespace(messages=FakeMessages()), ClinicalShield()).messages.create(
+        model="any", max_tokens=10, system=[{"type": "text", "text": "Contact lucia.ferrer@example.com"}],
+        messages=[{"role": "user", "content": blocks}])
+    flat = str(got[0]["messages"]) + str(got[0]["system"])
+    assert "lucia.ferrer@example.com" not in flat and "Ferrer Molina" not in flat
+
+
+def test_unmaskable_content_is_refused_before_sending(monkeypatch):
+    import pytest
+    from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
+    from navajo_egp.session import EGPSession
+    from deid.shield import ClinicalShield
+
+    destroyed = []
+    original = EGPSession.destroy
+    monkeypatch.setattr(EGPSession, "destroy", lambda self: destroyed.append(self) or original(self))
+    received = []
+    client = NavajoOpenAI(_fake_openai(received), ClinicalShield())
+    image = [{"type": "text", "text": NOTE}, {"type": "image_url", "image_url": {"url": "data:..."}}]
+    with pytest.raises(TypeError):
+        client.chat.completions.create(model="any", messages=[{"role": "user", "content": image}])
+    tool_call = {"role": "assistant", "content": None,
+                 "tool_calls": [{"function": {"arguments": '{"patient": "Lucía Ferrer Molina"}'}}]}
+    with pytest.raises(TypeError):
+        client.chat.completions.create(model="any", messages=[{"role": "user", "content": NOTE}, tool_call])
+    assert received == []  # nothing reached the provider
+    assert destroyed and all(s.destroyed for s in destroyed)
+
+
 def test_sessions_destroyed_when_provider_fails(monkeypatch):
     import pytest
     from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
