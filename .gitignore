@@ -5,3 +5,6 @@ _local*/
 __pycache__/
 *.pyc
 .venv/
+.venv/
+_job/
+_local_report/

@@ -11,7 +11,11 @@ Metrics as pre-registered in `PREREGISTRO.md`: `L` = 1 − strict span recall (o
 | E005 | 2026-10-28 | PC | H2 c2: entity boundaries, dropping v0.1.0 "Dr." addresses, Spanish phones, country/province gazetteer, street tails. | N3r c2 | see git | train | L 0.317, E 0.142, O 0.011, P 0.819, DI_E 0.050; c1 reproduced exactly with the same code. | Accepted. Second and last cycle (JEV: up to two). |
 | E006 | 2026-10-28 | PC | c2 does not overfit train. | S1, N3r c2 | see git | dev | S1: L 0.691, E 0.365, O 0.015, DI_E 0.241. N3r c2: L 0.318, E 0.134, O 0.012, P 0.802, DI_E 0.046. | No overfitting seen. Freeze c2. |
 
+| E007 | 2026-10-28 12:48 | server-ia, CPU lane, job `d73b065c564c4731` (ticket 96) | Pre-registered H1, H2, H3 and ablations; test run once. | S0 S1 S2 C1 N3 N3r H4 H4r, health c2, 2,000 bootstrap resamples, seeds 0/1/2 | 57f1eba | train, dev, test | pending | — |
+
 ## Decisions and deviations
+
+- **server-ia outage (2026-10-28 12:37–12:48 UTC):** SSH banner timeouts. JEV (`wait_then_local`, 0.94): wait up to 90 minutes, then run the same frozen code on the PC CPU. The server came back after 11 minutes; nothing ran locally.
 
 - **Policy (2026-10-28):** age, sex and kinship words are kept, as NAVAJO's EGP v2 design document states ("67 años → CLINICAL:AGE → Keep"; the model needs them for dosing). MEDDOCAN counts them as PHI, so all-PHI metrics penalise NAVAJO for this choice. The pre-registered direct-identifier subset does not include them.
 - **Presidio control (2026-10-28):** Presidio's language-agnostic pattern recognizers (email, phone, IBAN, card, IP, URL, date, crypto, Spanish NIF/NIE) are enabled for `es`, and the phone recognizer gets Spanish and Latin American regions. This makes the control stronger than the plain default, which is the conservative direction for H1.
