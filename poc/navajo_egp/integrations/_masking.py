@@ -9,6 +9,7 @@ calls, extra message fields) is refused before the provider is called.
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 _MESSAGE_FIELDS = {"role", "content"}
@@ -17,13 +18,21 @@ _TEXT_BLOCK_FIELDS = {"type", "text", "cache_control"}
 # response_format, stream …) is refused, because the wrapper would forward it unmasked (E016)
 OPENAI_ARGS = {"model", "messages", "temperature", "top_p", "max_tokens", "max_completion_tokens", "n", "seed",
                "presence_penalty", "frequency_penalty", "timeout"}
+_MODEL_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,99}")
 ANTHROPIC_ARGS = {"model", "messages", "system", "max_tokens", "temperature", "top_p", "top_k", "timeout"}
 
 
 def check_args(kwargs: dict, allowed: set) -> None:
+    """Only messages and system text are masked; the model name and numeric settings pass as given (E017)."""
     extra = set(kwargs) - allowed
     if extra:
         raise TypeError(f"arguments {sorted(extra)} cannot be masked; refusing to send them")
+    model = kwargs.get("model")
+    if model is not None and not (isinstance(model, str) and _MODEL_NAME.fullmatch(model)):
+        raise TypeError("model must be a plain model name")
+    for key, value in kwargs.items():
+        if key not in {"model", "messages", "system"} and value is not None and not isinstance(value, (int, float)):
+            raise TypeError(f"argument {key!r} must be a number")
 
 
 def blocked(name: str):

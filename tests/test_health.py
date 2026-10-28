@@ -212,6 +212,16 @@ def test_unmasked_arguments_and_other_apis_are_blocked():
         anthropic.beta
     with pytest.raises(AttributeError):
         NavajoChatModel(llm=SimpleNamespace(stream=print), egp=ClinicalShield()).stream
+    # E017: allowed arguments are validated: plain model name, numeric settings, no extra LangChain kwargs
+    with pytest.raises(TypeError):
+        client.chat.completions.create(model="lucia.ferrer@example.com", messages=msg)
+    with pytest.raises(TypeError):
+        client.chat.completions.create(model="any", messages=msg, temperature="lucia.ferrer@example.com")
+    with pytest.raises(TypeError):
+        anthropic.messages.create(model="Contact lucia.ferrer@example.com", max_tokens=10, messages=msg)
+    lc = NavajoChatModel(llm=SimpleNamespace(invoke=lambda x, **kw: received.append((x, kw))), egp=ClinicalShield())
+    with pytest.raises(TypeError):
+        lc.invoke("Contact lucia.ferrer@example.com", stop=["lucia.ferrer@example.com"])
     assert received == []
 
 

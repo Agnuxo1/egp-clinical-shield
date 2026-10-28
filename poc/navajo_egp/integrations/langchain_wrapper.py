@@ -76,6 +76,8 @@ class NavajoChatModel:
             # E014: message lists were sent with every content replaced by the joined text, or unmasked
             # when a copy failed; refuse until per-message masking is implemented and tested
             raise TypeError("NavajoChatModel accepts plain string prompts only")
+        if kwargs:
+            raise TypeError("extra arguments (stop, config …) cannot be masked; refusing to send them")
         text = self._extract_text(input_)
         anon_text, session = self._egp.anonymize(text)
 
@@ -108,6 +110,8 @@ class NavajoChatModel:
             # E014: message lists were sent with every content replaced by the joined text, or unmasked
             # when a copy failed; refuse until per-message masking is implemented and tested
             raise TypeError("NavajoChatModel accepts plain string prompts only")
+        if kwargs:
+            raise TypeError("extra arguments (stop, config …) cannot be masked; refusing to send them")
         text = self._extract_text(input_)
         anon_text, session = self._egp.anonymize(text)
 
