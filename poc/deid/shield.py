@@ -30,9 +30,10 @@ class ClinicalShield(EGPMiddleware):
             raise ValueError("mode must be 'default' or 'max'")
         self._anonymizer = lossless_anonymizer()
 
-    def anonymize(self, text: str) -> tuple[str, EGPSession]:
-        session = EGPSession()
-        self._anonymizer.reset_counters()
+    def anonymize(self, text: str, session: EGPSession | None = None) -> tuple[str, EGPSession]:
+        if session is None:
+            session = EGPSession()
+            self._anonymizer.reset_counters()
         entities = S.to_entities(text, self._system.spans(text))
         anon_text = self._anonymizer.apply(text, entities, session)
         if self._verify:

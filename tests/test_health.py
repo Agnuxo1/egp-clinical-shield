@@ -76,6 +76,86 @@ def test_shield_wraps_openai_style_client():
     assert out.choices[0].message.content == "Summary for Ferrer Molina: review HbA1c."
 
 
+def _fake_openai(received, reply=None, fail=False):
+    from types import SimpleNamespace
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            received.append([m["content"] for m in kwargs["messages"]])
+            if fail:
+                raise RuntimeError("provider down")
+            text = reply or "ok"
+            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=text))])
+
+    return SimpleNamespace(chat=SimpleNamespace(completions=FakeCompletions()))
+
+
+def test_multiturn_history_is_masked_consistently():
+    """E014: earlier assistant replies hold restored real names and must be masked again."""
+    from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
+    from deid.shield import ClinicalShield
+
+    received = []
+    client = NavajoOpenAI(_fake_openai(received), ClinicalShield())
+    history = [
+        {"role": "user", "content": NOTE},
+        {"role": "assistant", "content": "Summary for Ferrer Molina: review HbA1c."},
+        {"role": "user", "content": "Draft a letter about Ferrer Molina for Dr. Pablo Ruiz Soto."},
+    ]
+    client.chat.completions.create(model="any", messages=history)
+    sent = received[0]
+    for msg in sent:
+        for secret in ["Ferrer Molina", "Lucía", "Pablo Ruiz Soto", "4471023"]:
+            assert secret not in msg, (secret, msg)
+    # the same surname gets the same placeholder in every message of the request
+    placeholder = sent[1].split("Summary for ")[1].split(":")[0]
+    assert placeholder in sent[0] and placeholder in sent[2]
+
+
+def test_anthropic_history_is_masked():
+    from types import SimpleNamespace
+    from navajo_egp.integrations.anthropic_wrapper import NavajoAnthropic
+    from deid.shield import ClinicalShield
+
+    received = []
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            received.append([m["content"] for m in kwargs["messages"]] + [kwargs.get("system", "")])
+            return SimpleNamespace(content=[SimpleNamespace(text="ok")])
+
+    client = NavajoAnthropic(SimpleNamespace(messages=FakeMessages()), ClinicalShield())
+    client.messages.create(model="any", max_tokens=10, system="Patient file of Ferrer Molina.",
+                           messages=[{"role": "user", "content": NOTE},
+                                     {"role": "assistant", "content": "Noted for Ferrer Molina."}])
+    assert not any("Ferrer Molina" in m for m in received[0])
+
+
+def test_sessions_destroyed_when_provider_fails(monkeypatch):
+    import pytest
+    from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
+    from navajo_egp.session import EGPSession
+    from deid.shield import ClinicalShield
+
+    destroyed = []
+    original = EGPSession.destroy
+    monkeypatch.setattr(EGPSession, "destroy", lambda self: destroyed.append(self) or original(self))
+    client = NavajoOpenAI(_fake_openai([], fail=True), ClinicalShield())
+    with pytest.raises(RuntimeError):
+        client.chat.completions.create(model="any", messages=[{"role": "user", "content": NOTE}])
+    assert destroyed and all(s.destroyed for s in destroyed)
+
+
+def test_langchain_wrapper_refuses_message_lists():
+    import pytest
+    from navajo_egp.integrations.langchain_wrapper import NavajoChatModel
+    from deid.shield import ClinicalShield
+
+    model = NavajoChatModel(llm=None, egp=ClinicalShield())
+    with pytest.raises(TypeError):
+        model.invoke([{"role": "user", "content": NOTE}])
+
+
 def test_shield_roundtrip_identity_model():
     from deid.shield import ClinicalShield
 

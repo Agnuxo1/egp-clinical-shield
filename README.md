@@ -34,6 +34,7 @@ reply = client.chat.completions.create(model="…", messages=[{"role": "user", "
 
 - Detection in the default mode takes under 3 ms per note on a 2019 desktop CPU (Ryzen 7 3700X); no GPU and no model. Not yet measured on a laptop.
 - Masking is lossless: with an echo model every test note comes back exactly. With a real model, restoration depends on the model keeping the placeholders, which we have not measured.
+- The OpenAI and Anthropic wrappers mask every message of the conversation (earlier replies carry restored names) with one session per request, so the same person keeps the same placeholder; the mapping is destroyed even if the provider call fails. The LangChain wrapper accepts plain-text prompts only.
 
 ## Results
 
@@ -62,14 +63,14 @@ Pre-registered evaluation ([experiments/PREREGISTRO.md](experiments/PREREGISTRO.
 
 ## Reproduce
 
-Linux or macOS with Python 3.13, about 15 minutes on 4 CPU cores:
+Linux with Python 3.13 (tested on Debian 13), about 25 minutes on 4 CPU cores:
 
 ```bash
-bash poc/run_server.sh   # creates poc/.venv with pinned versions (checked), downloads MEDDOCAN (md5 checked) and the official scorer, runs 8 systems, writes poc/results/report
-python -m pytest tests   # 44 tests; the core needs no extra packages
+bash poc/run_server.sh   # pinned and checked environment, MEDDOCAN (md5 checked), official scorer (commit checked), 8 systems, report, then poc/run_posthoc.sh
+python -m pytest tests   # 48 tests; the core needs no extra packages
 ```
 
-Stress test, recount and residual risk: `poc/make_noheader.py`, `poc/recount.py`, `poc/residual_risk.py`.
+`poc/run_posthoc.sh` rebuilds the stress test, the core ablation and the residual-risk tables (outputs in `poc/results_posthoc/`); re-running it reproduced every published number exactly. `poc/recount.py` recomputes metrics from saved predictions (E011). Exact environment of E007: `poc/requirements.lock.txt`.
 
 ## What is masked and what is kept
 

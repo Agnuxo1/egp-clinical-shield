@@ -72,6 +72,10 @@ class NavajoChatModel:
     # ------------------------------------------------------------------ #
 
     def invoke(self, input_: Any, **kwargs: Any) -> Any:
+        if not isinstance(input_, str):
+            # E014: message lists were sent with every content replaced by the joined text, or unmasked
+            # when a copy failed; refuse until per-message masking is implemented and tested
+            raise TypeError("NavajoChatModel accepts plain string prompts only")
         text = self._extract_text(input_)
         anon_text, session = self._egp.anonymize(text)
 
@@ -100,6 +104,10 @@ class NavajoChatModel:
             session.destroy()
 
     async def ainvoke(self, input_: Any, **kwargs: Any) -> Any:
+        if not isinstance(input_, str):
+            # E014: message lists were sent with every content replaced by the joined text, or unmasked
+            # when a copy failed; refuse until per-message masking is implemented and tested
+            raise TypeError("NavajoChatModel accepts plain string prompts only")
         text = self._extract_text(input_)
         anon_text, session = self._egp.anonymize(text)
 

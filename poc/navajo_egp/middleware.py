@@ -127,7 +127,7 @@ class EGPMiddleware:
     # Core API                                                             #
     # ------------------------------------------------------------------ #
 
-    def anonymize(self, text: str) -> tuple[str, EGPSession]:
+    def anonymize(self, text: str, session: EGPSession | None = None) -> tuple[str, EGPSession]:
         """
         Detect and replace all PII entities in *text*.
 
@@ -143,8 +143,10 @@ class EGPMiddleware:
             If *verify_after_anonymize* is True and *strict* is True and
             the anonymised text still contains detectable PII.
         """
-        session = EGPSession()
-        self._anonymizer.reset_counters()
+        # pass an existing session to mask several messages of one request consistently
+        if session is None:
+            session = EGPSession()
+            self._anonymizer.reset_counters()
 
         # Apply custom patterns FIRST so they take priority and protect
         # their spans from being consumed by the built-in detectors.

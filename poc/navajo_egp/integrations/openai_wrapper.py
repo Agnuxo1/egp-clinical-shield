@@ -37,12 +37,15 @@ class _NavajoChatCompletions:
         messages = kwargs.get("messages", [])
         sessions: list = []
 
-        # Anonymise every user/system message
+        # Anonymise every message that carries text
         new_messages = []
         for msg in messages:
-            if msg.get("role") in {"user", "system"} and isinstance(msg.get("content"), str):
-                anon_content, session = self._egp.anonymize(msg["content"])
-                sessions.append(session)
+            # every role, assistant included: earlier replies carry restored real names (E014)
+            if isinstance(msg.get("content"), str):
+                # one session per request: the same person keeps the same placeholder in every message
+                anon_content, session = self._egp.anonymize(msg["content"], session=sessions[0] if sessions else None)
+                if not sessions:
+                    sessions.append(session)
                 new_msg = dict(msg)
                 new_msg["content"] = anon_content
                 new_messages.append(new_msg)
@@ -51,11 +54,9 @@ class _NavajoChatCompletions:
 
         kwargs["messages"] = new_messages
 
-        # Call the real API
-        response = self._original.create(**kwargs)
-
-        # De-anonymise the response text in place
+        # Call the real API and restore the reply; sessions are destroyed even if the call fails
         try:
+            response = self._original.create(**kwargs)
             for choice in response.choices:
                 if hasattr(choice.message, "content") and choice.message.content:
                     restored = choice.message.content
@@ -75,9 +76,12 @@ class _NavajoChatCompletions:
 
         new_messages = []
         for msg in messages:
-            if msg.get("role") in {"user", "system"} and isinstance(msg.get("content"), str):
-                anon_content, session = self._egp.anonymize(msg["content"])
-                sessions.append(session)
+            # every role, assistant included: earlier replies carry restored real names (E014)
+            if isinstance(msg.get("content"), str):
+                # one session per request: the same person keeps the same placeholder in every message
+                anon_content, session = self._egp.anonymize(msg["content"], session=sessions[0] if sessions else None)
+                if not sessions:
+                    sessions.append(session)
                 new_msg = dict(msg)
                 new_msg["content"] = anon_content
                 new_messages.append(new_msg)
@@ -86,9 +90,8 @@ class _NavajoChatCompletions:
 
         kwargs["messages"] = new_messages
 
-        response = await self._original.acreate(**kwargs)
-
         try:
+            response = await self._original.acreate(**kwargs)
             for choice in response.choices:
                 if hasattr(choice.message, "content") and choice.message.content:
                     restored = choice.message.content

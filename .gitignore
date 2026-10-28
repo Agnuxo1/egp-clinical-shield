@@ -12,3 +12,4 @@ poc/results/*/*/
 poc/data/
 poc/.venv/
 _data*/
+poc/results_posthoc/*/test/*/

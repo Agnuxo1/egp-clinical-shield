@@ -41,9 +41,11 @@ class _NavajoMessages:
         new_messages = []
         for msg in messages:
             content = msg.get("content")
-            if msg.get("role") in {"user"} and isinstance(content, str):
-                anon_content, session = self._egp.anonymize(content)
-                sessions.append(session)
+            if isinstance(content, str):  # user and assistant turns (E014)
+                # one session per request: the same person keeps the same placeholder in every message
+                anon_content, session = self._egp.anonymize(content, session=sessions[0] if sessions else None)
+                if not sessions:
+                    sessions.append(session)
                 new_msg = dict(msg)
                 new_msg["content"] = anon_content
                 new_messages.append(new_msg)
@@ -55,13 +57,13 @@ class _NavajoMessages:
         # Anonymise system prompt too if present
         system_sessions: list = []
         if "system" in kwargs and isinstance(kwargs["system"], str):
-            anon_sys, sys_session = self._egp.anonymize(kwargs["system"])
+            anon_sys, sys_session = self._egp.anonymize(kwargs["system"], session=sessions[0] if sessions else None)
             kwargs["system"] = anon_sys
-            system_sessions.append(sys_session)
-
-        response = self._original.create(**kwargs)
+            if not sessions:
+                system_sessions.append(sys_session)
 
         try:
+            response = self._original.create(**kwargs)
             all_sessions = system_sessions + sessions
             for block in response.content:
                 if hasattr(block, "text") and block.text:
@@ -83,9 +85,11 @@ class _NavajoMessages:
         new_messages = []
         for msg in messages:
             content = msg.get("content")
-            if msg.get("role") == "user" and isinstance(content, str):
-                anon_content, session = self._egp.anonymize(content)
-                sessions.append(session)
+            if isinstance(content, str):  # user and assistant turns (E014)
+                # one session per request: the same person keeps the same placeholder in every message
+                anon_content, session = self._egp.anonymize(content, session=sessions[0] if sessions else None)
+                if not sessions:
+                    sessions.append(session)
                 new_msg = dict(msg)
                 new_msg["content"] = anon_content
                 new_messages.append(new_msg)
@@ -96,13 +100,13 @@ class _NavajoMessages:
 
         system_sessions: list = []
         if "system" in kwargs and isinstance(kwargs["system"], str):
-            anon_sys, sys_session = self._egp.anonymize(kwargs["system"])
+            anon_sys, sys_session = self._egp.anonymize(kwargs["system"], session=sessions[0] if sessions else None)
             kwargs["system"] = anon_sys
-            system_sessions.append(sys_session)
-
-        response = await self._original.acreate(**kwargs)
+            if not sessions:
+                system_sessions.append(sys_session)
 
         try:
+            response = await self._original.acreate(**kwargs)
             all_sessions = system_sessions + sessions
             for block in response.content:
                 if hasattr(block, "text") and block.text:
