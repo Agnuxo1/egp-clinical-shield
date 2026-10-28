@@ -59,7 +59,49 @@ _DATE_TEXT_RE = re.compile(
 )
 _TITLE_NAME_RE = re.compile(r"\b(?:Dr|Dra|Drs|Prof|Sr|Sra|D|Dña)\.\s*(" + _CAP + r"(?:\s+(?:de\s+|del\s+|la\s+)?" + _CAP + r"){0,4})")
 _SPACY_EXTRA = {"LOC": EntityType.ADDRESS, "ORG": EntityType.ADDRESS}
-_PRIORITY = {"field": 0, "navajo": 1, "inst": 2, "street": 2, "pc": 3, "date": 3, "title": 3, "spacy": 4}
+_PRIORITY = {"field": 0, "navajo": 1, "navajo_addr": 1, "inst": 2, "street": 2, "pc": 3, "date": 3, "title": 3, "spacy": 4}
+
+# --- c2: boundaries, Spanish phones, places (train error analysis, LOG.md E005) ---------------
+# a new entity starts at these words; signature blocks in clinical letters chain several in one line
+_BOUNDARY_RE = re.compile(
+    r"\s+(?=(?:Hospital|Servicio|Unidad|Complejo|Cl[íi]nica|Centro|Departamento|Secci[óo]n|Instituto|"
+    r"Fundaci[óo]n|Universidad|Facultad|Calle|C/|Avda\.?|Avenida|Paseo|Plaza|Ronda|Apartado|E-?mail|Email|"
+    r"Correo|Tfno|Tel[ée]fono|Telef|Tlf|Fax|Dra?\.)\b)|(?<=[a-záéíóúñ\d)])\.\s+(?=[A-ZÁÉÍÓÚÑ])"
+)
+_NOT_PHI_START = re.compile(r"(?i)^(?:servicio|unidad|departamento|secci[óo]n|e-?mail|email|correo(?: electr[óo]nico)?|"
+                            r"tfno|tel[ée]fono|telef|tlf|fax|apartado(?: de correos)?)\b[\s.:\-]*$|"
+                            r"^(?:Servicio|Unidad|Departamento|Secci[óo]n)\s+de\b")
+_EMAIL_PREFIX = re.compile(r"(?i)^(?:e-?mail|email|correo)[\s.:\-]*")
+_DOCTOR_ADDR = re.compile(r"(?i)^dra?\.?\s")  # v0.1.0 ADDRESS reads Spanish "Dr." as English "drive"
+_PHONE_ES = re.compile(r"(?<![\d+])(?:\+34[\s.]?)?[6789]\d{2}(?:[\s.]?\d{2,3}){2,3}(?:\s*ext\.?\s*\d{1,5})?(?!\d)")
+_COUNTRIES = (r"España|Portugal|Francia|Italia|Alemania|Reino Unido|Inglaterra|Irlanda|Bélgica|Holanda|Países Bajos|"
+              r"Suiza|Austria|Suecia|Noruega|Dinamarca|Finlandia|Polonia|Rumanía|Rumania|Bulgaria|Ucrania|Rusia|Grecia|"
+              r"Turquía|Marruecos|Argelia|Túnez|Egipto|Senegal|Mali|Malí|Nigeria|Ghana|Guinea|Guinea Ecuatorial|Gambia|"
+              r"Mauritania|Camerún|Kenia|Etiopía|Sudáfrica|Estados Unidos|EE\. ?UU\.?|EEUU|Canadá|México|Guatemala|"
+              r"Honduras|El Salvador|Nicaragua|Costa Rica|Panamá|Cuba|República Dominicana|Puerto Rico|Colombia|"
+              r"Venezuela|Ecuador|Perú|Bolivia|Chile|Argentina|Uruguay|Paraguay|Brasil|China|Japón|India|Pakistán|"
+              r"Bangladesh|Filipinas|Indonesia|Tailandia|Vietnam|Corea|Irán|Irak|Siria|Israel|Arabia Saudí|Australia")
+_PROVINCES = ("Álava|Araba|Albacete|Alicante|Almería|Asturias|Ávila|Badajoz|Barcelona|Burgos|Cáceres|Cádiz|Cantabria|"
+              "Castellón|Ciudad Real|Córdoba|Cordoba|La Coruña|A Coruña|Coruña|Cuenca|Gerona|Girona|Granada|"
+              "Guadalajara|Guipúzcoa|Gipuzkoa|Huelva|Huesca|Islas Baleares|Baleares|Jaén|León|Lérida|Lleida|"
+              "La Rioja|Logroño|Lugo|Madrid|Málaga|Murcia|Navarra|Orense|Ourense|Palencia|Las Palmas|Pontevedra|"
+              "Salamanca|Santa Cruz de Tenerife|Tenerife|Segovia|Sevilla|Soria|Tarragona|Teruel|Toledo|Valencia|"
+              "Valladolid|Vizcaya|Bizkaia|Zamora|Zaragoza|Ceuta|Melilla|Bilbao|Pamplona|Iruña|Vitoria|Gasteiz|"
+              "San Sebastián|Donostia|Santander|Oviedo|Gijón|Santiago de Compostela|Vigo|Elche|Cartagena|"
+              "Alcalá de Henares|Móstoles|Getafe|Leganés|Fuenlabrada|Alcorcón|Terrassa|Sabadell|Badalona|"
+              "L'Hospitalet|Mataró|Jerez|Marbella|Algeciras|Mérida|Palma|Palma de Mallorca|Ibiza|Menorca|"
+              "Andalucía|Aragón|Canarias|Castilla y León|Castilla-La Mancha|Castilla La Mancha|Cataluña|Catalunya|"
+              "Extremadura|Galicia|Comunidad Valenciana|País Vasco|Euskadi")
+_PLACE_RE = re.compile(r"(?<![\wÁÉÍÓÚáéíóúñÑ])(?:" + _COUNTRIES + "|" + _PROVINCES + r")(?![\wáéíóúñ])")
+_PC_ONLY = re.compile(r"\b(?:E-)?(\d{5})\b")
+_STREET_TAIL = (r"(?:[,.]?\s*(?:\d{1,2}\s*[º°ª]?\s*(?:Dcha|Dch|Izq|Izda|Izquierda|Derecha|Centro|Bajo|[A-H])?\.?|"
+                r"[A-Z]\d?(?:\s?\d[A-Z])?|s/n|bajo|planta\s+\d+|puerta\s+\d+|piso\s+\d+)){0,3}")
+_STREET_RE_C2 = re.compile(
+    r"(?i)\b(?:c/|c\.|calle|avda\.?|av\.|avenida|plaza|pza\.?|paseo|p[ºo°]\.|carretera|ctra\.?|camino|ronda|"
+    r"glorieta|traves[íi]a|urbanizaci[óo]n|urb\.|pol[íi]gono|barrio)\s*"
+    r"[^\n,;.]{1,50}?(?:,?\s*(?:n[ºo°]\.?\s*)?(?:\d{1,4}|s/n)\b" + _STREET_TAIL + r")"
+)
+_INSTITUTION_RE_C2 = re.compile(_INSTITUTION_RE.pattern + r"(?:\s+\"[^\"\n]{2,40}\")?")
 
 
 def _trim(text: str, s: int, e: int) -> tuple[int, int]:
@@ -88,25 +130,55 @@ def lossless_anonymizer():
 class HealthPatterns:
     def __init__(self, cycle: str = "c1"):
         self.cycle = cycle
+        self.c2 = cycle >= "c2"
 
-    def candidates(self, text: str) -> list[tuple[int, int, int, EntityType]]:
+    def _pieces(self, text: str, s: int, e: int) -> list[tuple[int, int]]:
+        """c2: split a span where a new entity starts; drop pieces that are not PHI (department, labels)."""
+        if not self.c2:
+            return [(s, e)]
+        cuts = [s] + [m.end() for m in _BOUNDARY_RE.finditer(text, s, e)] + [e]
+        out = []
+        for a, b in zip(cuts, cuts[1:]):
+            a, b = _trim(text, a, b)
+            if b <= a or _NOT_PHI_START.search(text[a:b]):
+                continue
+            m = _EMAIL_PREFIX.match(text[a:b])
+            if m and "@" in text[a:b]:
+                a, b = _trim(text, a + m.end(), b)
+            if b > a:
+                out.append((a, b))
+        return out
+
+    def candidates(self, text: str, navajo_ents=()) -> list[tuple[int, int, int, EntityType]]:
         out: list[tuple[int, int, int, EntityType]] = []
 
         def add(kind, s, e, etype):
             s, e = _trim(text, s, e)
-            if e - s >= 1:
-                out.append((_PRIORITY[kind], s, e, etype))
+            for a, b in self._pieces(text, s, e):
+                if self.c2:
+                    tier = 0 if kind == "field" else 2 if kind in ("spacy", "navajo_addr") else 1
+                else:
+                    tier = _PRIORITY[kind]
+                out.append((tier, a, b, etype))
 
         for m in _FIELD_RE.finditer(text):
             key = re.sub(r"\s+", " ", m.group("key").strip())
             etype = next((t for rx, t in _KEY_TYPE if rx.match(key)), EntityType.MRN)
             add("field", m.start("val"), m.end("val"), etype)
-        for m in _INSTITUTION_RE.finditer(text):
+        for m in (_INSTITUTION_RE_C2 if self.c2 else _INSTITUTION_RE).finditer(text):
             add("inst", m.start(), m.end(), EntityType.ADDRESS)
-        for m in _STREET_RE.finditer(text):
+        for m in (_STREET_RE_C2 if self.c2 else _STREET_RE).finditer(text):
             add("street", m.start(), m.end(), EntityType.ADDRESS)
-        for m in _POSTCODE_CITY_RE.finditer(text):
-            add("pc", m.start(), m.end(), EntityType.ADDRESS)
+        if self.c2:
+            for m in _PC_ONLY.finditer(text):
+                add("pc", m.start(1), m.end(1), EntityType.ADDRESS)
+            for m in _PLACE_RE.finditer(text):
+                add("place", m.start(), m.end(), EntityType.ADDRESS)
+            for m in _PHONE_ES.finditer(text):
+                add("phone", m.start(), m.end(), EntityType.PHONE)
+        else:
+            for m in _POSTCODE_CITY_RE.finditer(text):
+                add("pc", m.start(), m.end(), EntityType.ADDRESS)
         for m in _DATE_TEXT_RE.finditer(text):
             add("date", m.start(), m.end(), EntityType.DATE_OF_BIRTH)
         for m in _TITLE_NAME_RE.finditer(text):
@@ -115,12 +187,19 @@ class HealthPatterns:
             for ent in det._SPACY_NLP(text).ents:
                 if ent.label_ in _SPACY_EXTRA:
                     add("spacy", ent.start_char, ent.end_char, _SPACY_EXTRA[ent.label_])
+        for e in navajo_ents:
+            if self.c2 and e.entity_type == EntityType.ADDRESS:
+                if _DOCTOR_ADDR.match(e.text):
+                    continue
+                add("navajo_addr", e.start, e.end, e.entity_type)
+            else:
+                add("navajo", e.start, e.end, e.entity_type)
         return out
 
     def combine(self, text: str, navajo_ents: list[DetectedEntity]) -> list[DetectedEntity]:
-        cands = self.candidates(text)
-        cands += [(_PRIORITY["navajo"], e.start, e.end, e.entity_type) for e in navajo_ents]
-        # higher priority first, then longer; keep spans that do not overlap an accepted one
+        cands = self.candidates(text, navajo_ents)
+        # c1: higher priority first, then longer; c2: tier first, then longer.
+        # A span is kept only if it does not overlap one already accepted.
         cands.sort(key=lambda c: (c[0], -(c[2] - c[1]), c[1]))
         taken: list[tuple[int, int]] = []
         kept: list[DetectedEntity] = []
