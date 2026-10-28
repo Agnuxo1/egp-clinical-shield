@@ -13,3 +13,5 @@ poc/data/
 poc/.venv/
 _data*/
 poc/results_posthoc/*/test/*/
+docs/APPLICATION*
+docs/answers/
