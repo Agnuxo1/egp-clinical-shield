@@ -70,7 +70,7 @@ bash poc/run_server.sh   # pinned and checked environment, MEDDOCAN (md5 checked
 python -m pytest tests   # 51 tests; the core needs no extra packages
 ```
 
-`poc/run_posthoc.sh` rebuilds the stress test, the core ablation and the residual-risk tables (outputs in `poc/results_posthoc/`); re-running it reproduced every published number exactly. `poc/recount.py` recomputes metrics from saved predictions (E011). Exact environment of E007: `poc/requirements.lock.txt`.
+`poc/run_posthoc.sh` rebuilds the stress test, the core ablation and the residual-risk tables (outputs in `poc/results_posthoc/`); re-running it reproduced every published metric exactly (timings vary by machine). `poc/recount.py` recomputes metrics from saved predictions (E011). Exact environment of E007: `poc/requirements.lock.txt`.
 
 ## What is masked and what is kept
 

@@ -13,7 +13,9 @@ import re
 from typing import Any
 
 _MESSAGE_FIELDS = {"role", "content"}
+_ROLES = {"system", "developer", "user", "assistant"}
 _TEXT_BLOCK_FIELDS = {"type", "text", "cache_control"}
+_CACHE_CONTROL = {"type": "ephemeral"}  # the only cache setting forwarded (E018)
 # request arguments that carry no free text; anything else (tools, extra_body, metadata, user,
 # response_format, stream …) is refused, because the wrapper would forward it unmasked (E016)
 OPENAI_ARGS = {"model", "messages", "temperature", "top_p", "max_tokens", "max_completion_tokens", "n", "seed",
@@ -58,7 +60,8 @@ def mask_request(egp: Any, messages: list, system: Any = None) -> tuple[list, An
             blocks = []
             for block in value:
                 if (isinstance(block, dict) and block.get("type") == "text"
-                        and isinstance(block.get("text"), str) and set(block) <= _TEXT_BLOCK_FIELDS):
+                        and isinstance(block.get("text"), str) and set(block) <= _TEXT_BLOCK_FIELDS
+                        and block.get("cache_control", _CACHE_CONTROL) == _CACHE_CONTROL):
                     blocks.append({**block, "text": text(block["text"])})
                 else:
                     kind = block.get("type") if isinstance(block, dict) else type(block).__name__
@@ -72,6 +75,8 @@ def mask_request(egp: Any, messages: list, system: Any = None) -> tuple[list, An
             extra = set(msg) - _MESSAGE_FIELDS
             if extra:
                 raise TypeError(f"message fields {sorted(extra)} cannot be masked; refusing to send them")
+            if msg.get("role") not in _ROLES:
+                raise TypeError("unknown message role; refusing to send it")
             masked.append({**msg, "content": content(msg.get("content"))})
         masked_system = content(system)
     except Exception:

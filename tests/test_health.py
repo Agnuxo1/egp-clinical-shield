@@ -177,6 +177,10 @@ def test_unmaskable_content_is_refused_before_sending(monkeypatch):
                  "tool_calls": [{"function": {"arguments": '{"patient": "Lucía Ferrer Molina"}'}}]}
     with pytest.raises(TypeError):
         client.chat.completions.create(model="any", messages=[{"role": "user", "content": NOTE}, tool_call])
+    for bad in ([{"role": "user", "content": [{"type": "text", "text": "hi", "cache_control": {"type": "lucia.ferrer@example.com"}}]}],
+                [{"role": "user12345678A", "content": "hi"}]):
+        with pytest.raises(TypeError):
+            client.chat.completions.create(model="any", messages=bad)
     assert received == []  # nothing reached the provider
     assert destroyed and all(s.destroyed for s in destroyed)
 
