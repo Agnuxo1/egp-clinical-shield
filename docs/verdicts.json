@@ -1,0 +1,77 @@
+{
+ "H1  NAVAJO 0.1 vs Presidio": [
+  0.016873875212574496,
+  false,
+  true
+ ],
+ "H2  health pack vs 0.1 (exposure)": [
+  -0.21689581180958437,
+  true,
+  false
+ ],
+ "H2  health pack vs 0.1 (over-masking)": [
+  0.020662070490059272,
+  false,
+  true
+ ],
+ "H3a hybrid vs NAVAJO health": [
+  -0.02296630178149818,
+  true,
+  false
+ ],
+ "H3b hybrid vs Presidio": [
+  -0.20790199283438177,
+  true,
+  false
+ ],
+ "Abl. NAVAJO health vs Presidio": [
+  -0.18493569105288357,
+  true,
+  false
+ ],
+ "Abl. NAVAJO health vs Presidio (direct ids)": [
+  -0.2275592627214113,
+  true,
+  false
+ ],
+ "Abl. hybrid vs Presidio (direct ids)": [
+  -0.24071810359291484,
+  true,
+  false
+ ],
+ "Abl. hybrid over-masking vs Presidio": [
+  0.005031936267037886,
+  false,
+  true
+ ],
+ "Abl. spaCy inside hybrid": [
+  0.0005778724387867917,
+  false,
+  true
+ ],
+ "Abl. NAVAJO inside hybrid, no spaCy": [
+  -0.20847986527316853,
+  true,
+  false
+ ],
+ "Abl. Presidio inside hybrid, no spaCy": [
+  -0.04401736919444581,
+  true,
+  false
+ ],
+ "Abl. Presidio inside hybrid, no spaCy (over-masking)": [
+  0.04470342796067009,
+  false,
+  true
+ ],
+ "Abl. NAVAJO health no spaCy vs Presidio": [
+  -0.16446249607872274,
+  true,
+  false
+ ],
+ "Abl. NAVAJO health no spaCy vs Presidio (over-masking)": [
+  -0.0401838676857868,
+  true,
+  false
+ ]
+}

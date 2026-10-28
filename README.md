@@ -27,16 +27,37 @@ answer ◄── restore the real values from an in-memory mapping, then destroy
 
 ## Results
 
-RESULTS_PLACEHOLDER
+Pre-registered evaluation on [MEDDOCAN](https://doi.org/10.5281/zenodo.4279323): 1,000 public synthetic Spanish clinical cases with gold annotations (500 train, 250 dev, 250 test), scored with the official MEDDOCAN scorer. The health pack was built on train only; **test was run once, for every system at the same time**. Lower is better everywhere.
+
+![What reaches an external AI model](docs/fig_exposure_test.png)
+
+| Test set, 250 notes | PHI characters left visible | Direct-identifier characters left visible | Clinical text masked by mistake | Notes with ≥1 direct identifier fully visible | ms per note (CPU) | Exact restore |
+|---|---|---|---|---|---|---|
+| Raw note (what happens today) | 100 % | 100 % | 0 % | 100 % | — | — |
+| Microsoft Presidio (control) | 31.0 % | 27.0 % | 5.2 % | 97.2 % | 50 | — |
+| navajo-egp 0.1 + spaCy (before this work) | 32.7 % | 17.7 % | 2.2 % | 90.0 % | 32 | 1.6 % |
+| **Health pack, default mode** (no ML model) | **14.5 %** | **5.0 %** | **1.2 %** | **15.6 %** | **2.7** | **100 %** |
+| **Health pack + Presidio, maximum protection** | **10.1 %** | **2.8 %** | 5.6 % | **9.6 %** | 52 | **100 %** |
+
+Pre-registered hypotheses ([experiments/PREREGISTRO.md](experiments/PREREGISTRO.md)), with paired bootstrap intervals in [docs/RESULTS.md](docs/RESULTS.md):
+
+- **H1, rejected.** navajo-egp 0.1 alone did not beat Presidio: +1.69 points of exposure, 95 % CI [+0.37, +2.91].
+- **H2, rejected narrowly.** The health pack with spaCy cut exposure by 21.7 points on dev, but raised over-masking by 2.07 points; the pre-set limit was 2. The default mode (no spaCy) lowers over-masking instead.
+- **H3, confirmed.** The hybrid exposes less than the health pack alone (−2.30 points) and than Presidio (−20.79 points).
+
+Stress test without the form-like header (62 % of the PHI sits there; [docs/stress](docs/stress)): Presidio 27.5 %, default mode 23.9 % (difference −3.65, CI [−6.08, −1.18]), maximum protection 16.9 %. Much of the margin on full notes comes from the header. Per-note residual risk and an audit of 30 leaks: [docs/RESIDUAL_RISK.md](docs/RESIDUAL_RISK.md). Two bugs found in that audit are fixed in the next cycle (c3), checked on train and dev only; the test numbers above are from the frozen cycle c2.
 
 ## Reproduce
 
+Linux or macOS with Python 3.13, about 15 minutes on 4 CPU cores:
+
 ```bash
-python -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
-bash poc/run_server.sh          # downloads MEDDOCAN from Zenodo (md5 checked) and the official scorer, runs everything
-python poc/make_report.py --results poc/results --out docs
+bash poc/run_server.sh   # creates poc/.venv with the pinned versions, downloads MEDDOCAN (md5 checked) and the official scorer, runs all 8 systems
+poc/.venv/bin/python poc/make_report.py --results poc/results --out docs
+python -m pytest tests   # 42 tests; the core needs no extra packages
 ```
+
+Stress test and residual risk: `poc/make_noheader.py`, then `poc/run_eval.py` on the new folder, and `poc/residual_risk.py`.
 
 The pre-registration is in [experiments/PREREGISTRO.md](experiments/PREREGISTRO.md) and every run, including the negative ones, is in [experiments/LOG.md](experiments/LOG.md).
 

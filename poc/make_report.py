@@ -32,6 +32,12 @@ TESTS = [
     ("Abl. hybrid vs Presidio (direct ids)", "H4", "C1", "DI_E_exposure", "test"),
     ("Abl. hybrid over-masking vs Presidio", "H4", "C1", "O_overmask", "test"),
     ("Abl. spaCy inside hybrid", "H4", "H4r", "E_exposure", "test"),
+    # added after the test run (LOG.md E008): the same comparisons for the hybrid without spaCy
+    ("Abl. NAVAJO inside hybrid, no spaCy", "H4r", "C1", "E_exposure", "test"),
+    ("Abl. Presidio inside hybrid, no spaCy", "H4r", "N3r", "E_exposure", "test"),
+    ("Abl. Presidio inside hybrid, no spaCy (over-masking)", "H4r", "N3r", "O_overmask", "test"),
+    ("Abl. NAVAJO health no spaCy vs Presidio", "N3r", "C1", "E_exposure", "test"),
+    ("Abl. NAVAJO health no spaCy vs Presidio (over-masking)", "N3r", "C1", "O_overmask", "test"),
 ]
 
 
@@ -115,8 +121,8 @@ def figures(rows, out_dir, split="test"):
         ax.barh(y, vals, height=0.62, color=[role(s) for s in sids], edgecolor=surface, linewidth=2)
         ax.errorbar(vals, y, xerr=[[v - 100 * c[0] for v, c in zip(vals, ci)], [100 * c[1] - v for v, c in zip(vals, ci)]],
                     fmt="none", ecolor=ink, elinewidth=1, capsize=3)
-        for yi, v in zip(y, vals):
-            ax.text(v + 1.5, yi, f"{v:.1f} %", va="center", fontsize=9, color=ink)
+        for yi, v, c in zip(y, vals, ci):
+            ax.text(max(v, 100 * c[1]) + 1.5, yi, f"{v:.1f} %", va="center", fontsize=9, color=ink)
         ax.set_yticks(y, [SHORT[s] for s in sids], fontsize=9, color=ink)
         ax.set_xlim(0, 112)
         ax.set_title(title, fontsize=11, color=ink, loc="left")
@@ -132,7 +138,7 @@ def figures(rows, out_dir, split="test"):
                         Patch(color=navajo, label="NAVAJO-based")], loc="lower center", ncol=3, frameon=False, fontsize=9)
     fig.suptitle(f"MEDDOCAN {split} set: what reaches an external AI model ({rows[f'{split}/S0']['n_docs']} Spanish clinical cases)",
                  fontsize=12, color=ink, x=0.01, ha="left")
-    fig.tight_layout(rect=(0, 0.07, 1, 0.94))
+    fig.tight_layout(rect=(0, 0.07, 1, 0.97))
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, f"fig_exposure_{split}.png")
     fig.savefig(path, dpi=160, facecolor=surface)

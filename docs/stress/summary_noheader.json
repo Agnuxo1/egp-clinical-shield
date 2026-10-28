@@ -1,0 +1,2349 @@
+{
+ "env": {
+  "python": "3.13.7",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "numpy": "2.4.6",
+  "spacy": "3.8.16",
+  "presidio_analyzer": "?",
+  "es_core_news_lg": "3.8.0",
+  "build_seconds": 3.7,
+  "presidio_recognizers_es": [
+   "CreditCardRecognizer",
+   "CryptoRecognizer",
+   "DateRecognizer",
+   "EmailRecognizer",
+   "EsNieRecognizer",
+   "EsNifRecognizer",
+   "IbanRecognizer",
+   "IpRecognizer",
+   "MacAddressRecognizer",
+   "MedicalLicenseRecognizer",
+   "PhoneRecognizer",
+   "SpacyRecognizer",
+   "UrlRecognizer"
+  ],
+  "presidio_added_for_es": []
+ },
+ "args": {
+  "data": "_data/meddocan_noheader",
+  "evaluator": "_tools/MEDDOCAN-Evaluation-Script",
+  "splits": [
+   "test"
+  ],
+  "systems": [
+   "S0",
+   "S1",
+   "S2",
+   "C1",
+   "N3",
+   "N3r",
+   "H4",
+   "H4r"
+  ],
+  "health": "c2",
+  "out": "_job/e008_results",
+  "boot": 2000
+ },
+ "results": {
+  "test/S0": {
+   "system": "S0_RAW",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 1.0,
+    "E_exposure": 1.0,
+    "O_overmask": 0.0,
+    "P_strict": 0.0,
+    "R_strict": 0.0,
+    "F1_strict": 0.0,
+    "DI_L_leak": 1.0,
+    "DI_E_exposure": 1.0
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      1.0,
+      1.0
+     ],
+     "E_exposure": [
+      1.0,
+      1.0
+     ],
+     "O_overmask": [
+      0.0,
+      0.0
+     ],
+     "P_strict": [
+      0.0,
+      0.0
+     ],
+     "R_strict": [
+      0.0,
+      0.0
+     ],
+     "F1_strict": [
+      0.0,
+      0.0
+     ],
+     "DI_L_leak": [
+      1.0,
+      1.0
+     ],
+     "DI_E_exposure": [
+      1.0,
+      1.0
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      1.0,
+      1.0
+     ],
+     "E_exposure": [
+      1.0,
+      1.0
+     ],
+     "O_overmask": [
+      0.0,
+      0.0
+     ],
+     "P_strict": [
+      0.0,
+      0.0
+     ],
+     "R_strict": [
+      0.0,
+      0.0
+     ],
+     "F1_strict": [
+      0.0,
+      0.0
+     ],
+     "DI_L_leak": [
+      1.0,
+      1.0
+     ],
+     "DI_E_exposure": [
+      1.0,
+      1.0
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      1.0,
+      1.0
+     ],
+     "E_exposure": [
+      1.0,
+      1.0
+     ],
+     "O_overmask": [
+      0.0,
+      0.0
+     ],
+     "P_strict": [
+      0.0,
+      0.0
+     ],
+     "R_strict": [
+      0.0,
+      0.0
+     ],
+     "F1_strict": [
+      0.0,
+      0.0
+     ],
+     "DI_L_leak": [
+      1.0,
+      1.0
+     ],
+     "DI_E_exposure": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.0,
+    "strict_R": 0.0,
+    "merged_P": 0.0,
+    "merged_R": 0.0,
+    "n_docs": 250
+   },
+   "ms_per_doc": 0.0,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 0,
+     "chars": 3132,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 0,
+     "chars": 5485,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 0,
+     "chars": 5433,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 0,
+     "chars": 4102,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 0,
+     "chars": 3949,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 0,
+     "chars": 718,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 0,
+     "chars": 1323,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 0,
+     "chars": 726,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 0,
+     "chars": 1436,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 0,
+     "chars": 258,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 0,
+     "chars": 78,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 0,
+     "chars": 168,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 0,
+     "chars": 9,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    }
+   },
+   "totals": {
+    "tp": 0,
+    "fn": 2164,
+    "fp": 0,
+    "phi_chars": 27855,
+    "phi_exposed": 27855,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 0,
+    "di_tp": 0,
+    "di_fn": 825,
+    "di_chars": 15418,
+    "di_exposed": 15418
+   }
+  },
+  "test/S1": {
+   "system": "S1_NAVAJO_REGEX",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.7652495378927912,
+    "E_exposure": 0.3764135702746365,
+    "O_overmask": 0.012629589381512353,
+    "P_strict": 0.45075421472937,
+    "R_strict": 0.23475046210720887,
+    "F1_strict": 0.30872075357034334,
+    "DI_L_leak": 0.5866666666666667,
+    "DI_E_exposure": 0.18030873005577897
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.7497664166337676,
+      0.7802174466122197
+     ],
+     "E_exposure": [
+      0.3556090112472249,
+      0.3971456131254741
+     ],
+     "O_overmask": [
+      0.010786200121780016,
+      0.014626580739585303
+     ],
+     "P_strict": [
+      0.4227363258565622,
+      0.47858133023763993
+     ],
+     "R_strict": [
+      0.21978255338778033,
+      0.2502335833662324
+     ],
+     "F1_strict": [
+      0.29090855989804587,
+      0.3271328380678298
+     ],
+     "DI_L_leak": [
+      0.553972138803265,
+      0.6184657647868216
+     ],
+     "DI_E_exposure": [
+      0.15401818502595116,
+      0.20754691853125354
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.7488270053256825,
+      0.781431504240826
+     ],
+     "E_exposure": [
+      0.3557877020947778,
+      0.39698956747214104
+     ],
+     "O_overmask": [
+      0.010876884033485766,
+      0.014630871027750474
+     ],
+     "P_strict": [
+      0.4215923057437187,
+      0.47794338077073545
+     ],
+     "R_strict": [
+      0.21856849575917403,
+      0.2511729946743175
+     ],
+     "F1_strict": [
+      0.289853989945571,
+      0.3278899167788057
+     ],
+     "DI_L_leak": [
+      0.5541327780499755,
+      0.618929163565623
+     ],
+     "DI_E_exposure": [
+      0.1545354194935045,
+      0.2076532324138285
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.7498805802982415,
+      0.7800464571217595
+     ],
+     "E_exposure": [
+      0.35466111961181335,
+      0.39676772373868696
+     ],
+     "O_overmask": [
+      0.010809975707844022,
+      0.01473566316311836
+     ],
+     "P_strict": [
+      0.42474696277076057,
+      0.47979156900660175
+     ],
+     "R_strict": [
+      0.21995354287824054,
+      0.2501194197017586
+     ],
+     "F1_strict": [
+      0.29179322561843984,
+      0.32765290129707825
+     ],
+     "DI_L_leak": [
+      0.5542018174399836,
+      0.6170760630708932
+     ],
+     "DI_E_exposure": [
+      0.15431494838774973,
+      0.20866837876518132
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.45075421472937,
+    "strict_R": 0.23475046210720887,
+    "merged_P": 0.46005267778753295,
+    "merged_R": 0.2406982085438677,
+    "n_docs": 250
+   },
+   "ms_per_doc": 1.36,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 137,
+     "chars": 3132,
+     "covered": 1528,
+     "recall": 0.3135011441647597,
+     "char_coverage": 0.4878671775223499
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 94,
+     "chars": 5485,
+     "covered": 5260,
+     "recall": 0.3745019920318725,
+     "char_coverage": 0.95897903372835
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 218,
+     "chars": 5433,
+     "covered": 5299,
+     "recall": 0.8790322580645161,
+     "char_coverage": 0.9753359101785386
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 9,
+     "chars": 4102,
+     "covered": 2707,
+     "recall": 0.05389221556886228,
+     "char_coverage": 0.6599219892735251
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 18,
+     "chars": 3949,
+     "covered": 2599,
+     "recall": 0.13846153846153847,
+     "char_coverage": 0.6581413015953406
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 3,
+     "chars": 718,
+     "covered": 187,
+     "recall": 0.02586206896551724,
+     "char_coverage": 0.2604456824512535
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 5,
+     "chars": 1323,
+     "covered": 50,
+     "recall": 0.04424778761061947,
+     "char_coverage": 0.03779289493575208
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 0,
+     "chars": 726,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 9,
+     "chars": 1436,
+     "covered": 636,
+     "recall": 0.13432835820895522,
+     "char_coverage": 0.4428969359331476
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 12,
+     "chars": 258,
+     "covered": 170,
+     "recall": 0.5,
+     "char_coverage": 0.6589147286821705
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 3,
+     "chars": 78,
+     "covered": 42,
+     "recall": 0.42857142857142855,
+     "char_coverage": 0.5384615384615384
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 0,
+     "chars": 168,
+     "covered": 66,
+     "recall": 0.0,
+     "char_coverage": 0.39285714285714285
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 0,
+     "chars": 9,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    }
+   },
+   "totals": {
+    "tp": 508,
+    "fn": 1656,
+    "fp": 619,
+    "phi_chars": 27855,
+    "phi_exposed": 10485,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 6241,
+    "di_tp": 341,
+    "di_fn": 484,
+    "di_chars": 15418,
+    "di_exposed": 2780
+   },
+   "roundtrip_exact": 0.0,
+   "roundtrip_ws_normalised": 1.0
+  },
+  "test/S2": {
+   "system": "S2_NAVAJO_SPACY",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.7689463955637708,
+    "E_exposure": 0.3616226889247891,
+    "O_overmask": 0.017644190004391318,
+    "P_strict": 0.3663003663003663,
+    "R_strict": 0.23105360443622922,
+    "F1_strict": 0.2833663927458204,
+    "DI_L_leak": 0.6036363636363636,
+    "DI_E_exposure": 0.1685692048255286
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.7515789969279978,
+      0.7850567757784319
+     ],
+     "E_exposure": [
+      0.3408029206077062,
+      0.3817602442673131
+     ],
+     "O_overmask": [
+      0.01565948344184391,
+      0.019787075164702045
+     ],
+     "P_strict": [
+      0.3392099283513163,
+      0.3934880440397995
+     ],
+     "R_strict": [
+      0.21494322422156806,
+      0.2484210030720022
+     ],
+     "F1_strict": [
+      0.2644475383252654,
+      0.30299689946382996
+     ],
+     "DI_L_leak": [
+      0.5696632056178761,
+      0.6366845966775224
+     ],
+     "DI_E_exposure": [
+      0.14247126925679182,
+      0.19660845418859177
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.7515096353935198,
+      0.7852566262353998
+     ],
+     "E_exposure": [
+      0.3401751094463147,
+      0.38194655488021606
+     ],
+     "O_overmask": [
+      0.015687342992445556,
+      0.019761344751344067
+     ],
+     "P_strict": [
+      0.3398407241131366,
+      0.3918078805929273
+     ],
+     "R_strict": [
+      0.21474337376460018,
+      0.24849036460648014
+     ],
+     "F1_strict": [
+      0.26440644806775876,
+      0.302970479042445
+     ],
+     "DI_L_leak": [
+      0.5705517642823771,
+      0.6362626769546035
+     ],
+     "DI_E_exposure": [
+      0.14374154491062036,
+      0.19610849379550901
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.7519137458273725,
+      0.7848165273973352
+     ],
+     "E_exposure": [
+      0.34015784797259446,
+      0.38223231789544787
+     ],
+     "O_overmask": [
+      0.015546185091669785,
+      0.019947667511251103
+     ],
+     "P_strict": [
+      0.3398775548752367,
+      0.3950336843537877
+     ],
+     "R_strict": [
+      0.2151834726026648,
+      0.24808625417262753
+     ],
+     "F1_strict": [
+      0.2648152363734668,
+      0.30238952569807176
+     ],
+     "DI_L_leak": [
+      0.5689959188024426,
+      0.6358336554421227
+     ],
+     "DI_E_exposure": [
+      0.14374296199127018,
+      0.19521254611728522
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.3663003663003663,
+    "strict_R": 0.23105360443622922,
+    "merged_P": 0.37163636363636365,
+    "merged_R": 0.23515876668200644,
+    "n_docs": 250
+   },
+   "ms_per_doc": 36.35,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 140,
+     "chars": 3132,
+     "covered": 1530,
+     "recall": 0.32036613272311215,
+     "char_coverage": 0.4885057471264368
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 86,
+     "chars": 5485,
+     "covered": 5412,
+     "recall": 0.3426294820717131,
+     "char_coverage": 0.9866909753874202
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 211,
+     "chars": 5433,
+     "covered": 5317,
+     "recall": 0.8508064516129032,
+     "char_coverage": 0.9786489968709737
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 8,
+     "chars": 4102,
+     "covered": 2736,
+     "recall": 0.04790419161676647,
+     "char_coverage": 0.666991711360312
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 18,
+     "chars": 3949,
+     "covered": 2803,
+     "recall": 0.13846153846153847,
+     "char_coverage": 0.7097999493542669
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 3,
+     "chars": 718,
+     "covered": 181,
+     "recall": 0.02586206896551724,
+     "char_coverage": 0.2520891364902507
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 5,
+     "chars": 1323,
+     "covered": 50,
+     "recall": 0.04424778761061947,
+     "char_coverage": 0.03779289493575208
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 3,
+     "chars": 726,
+     "covered": 17,
+     "recall": 0.0375,
+     "char_coverage": 0.023415977961432508
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 9,
+     "chars": 1436,
+     "covered": 690,
+     "recall": 0.13432835820895522,
+     "char_coverage": 0.4805013927576602
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 12,
+     "chars": 258,
+     "covered": 170,
+     "recall": 0.5,
+     "char_coverage": 0.6589147286821705
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 3,
+     "chars": 78,
+     "covered": 42,
+     "recall": 0.42857142857142855,
+     "char_coverage": 0.5384615384615384
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 0,
+     "chars": 168,
+     "covered": 66,
+     "recall": 0.0,
+     "char_coverage": 0.39285714285714285
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 2,
+     "chars": 9,
+     "covered": 9,
+     "recall": 1.0,
+     "char_coverage": 1.0
+    }
+   },
+   "totals": {
+    "tp": 500,
+    "fn": 1664,
+    "fp": 865,
+    "phi_chars": 27855,
+    "phi_exposed": 10073,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 8719,
+    "di_tp": 327,
+    "di_fn": 498,
+    "di_chars": 15418,
+    "di_exposed": 2599
+   },
+   "roundtrip_exact": 0.024,
+   "roundtrip_ws_normalised": 1.0
+  },
+  "test/C1": {
+   "system": "C1_PRESIDIO",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.6469500924214417,
+    "E_exposure": 0.2754263148447316,
+    "O_overmask": 0.03139690422274702,
+    "P_strict": 0.2780203784570597,
+    "R_strict": 0.35304990757855825,
+    "F1_strict": 0.31107491856677527,
+    "DI_L_leak": 0.5951515151515152,
+    "DI_E_exposure": 0.16487222726683098
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.6247713526627826,
+      0.6688091114989828
+     ],
+     "E_exposure": [
+      0.2558435088669392,
+      0.2956977653285098
+     ],
+     "O_overmask": [
+      0.029079812397051315,
+      0.03375863058734675
+     ],
+     "P_strict": [
+      0.25537882916638277,
+      0.30200775197531343
+     ],
+     "R_strict": [
+      0.3311908885010172,
+      0.37522864733721745
+     ],
+     "F1_strict": [
+      0.2903643379845269,
+      0.3324580557403497
+     ],
+     "DI_L_leak": [
+      0.5610314324974236,
+      0.6264786198685096
+     ],
+     "DI_E_exposure": [
+      0.1394768651192703,
+      0.1926632973352527
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.6244832699596664,
+      0.6689889158058924
+     ],
+     "E_exposure": [
+      0.25529015023636253,
+      0.2959904697056437
+     ],
+     "O_overmask": [
+      0.029177047064369372,
+      0.03390983428951112
+     ],
+     "P_strict": [
+      0.25530291208373324,
+      0.30135917726769557
+     ],
+     "R_strict": [
+      0.3310110841941075,
+      0.3755167300403336
+     ],
+     "F1_strict": [
+      0.2899586553699326,
+      0.3317583845250018
+     ],
+     "DI_L_leak": [
+      0.5631169963906503,
+      0.6279391336097635
+     ],
+     "DI_E_exposure": [
+      0.14034381332462853,
+      0.19189220675174157
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.6248817505199328,
+      0.6688085845885269
+     ],
+     "E_exposure": [
+      0.25531022177370827,
+      0.29597587287244403
+     ],
+     "O_overmask": [
+      0.0291436507348442,
+      0.03371447684912999
+     ],
+     "P_strict": [
+      0.2561404027440934,
+      0.30184814000041704
+     ],
+     "R_strict": [
+      0.33119141541147307,
+      0.37511824948006733
+     ],
+     "F1_strict": [
+      0.2912659283980582,
+      0.3316786328046495
+     ],
+     "DI_L_leak": [
+      0.5628709592458033,
+      0.6248535908491797
+     ],
+     "DI_E_exposure": [
+      0.1399313797513934,
+      0.19146255841307525
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.2780203784570597,
+    "strict_R": 0.35304990757855825,
+    "merged_P": 0.28411552346570396,
+    "merged_R": 0.36018306636155606,
+    "n_docs": 250
+   },
+   "ms_per_doc": 53.67,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 225,
+     "chars": 3132,
+     "covered": 2251,
+     "recall": 0.5148741418764302,
+     "char_coverage": 0.7187100893997446
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 14,
+     "recall": 0.0,
+     "char_coverage": 0.007268951194184839
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 87,
+     "chars": 5485,
+     "covered": 5374,
+     "recall": 0.3466135458167331,
+     "char_coverage": 0.9797629899726527
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 227,
+     "chars": 5433,
+     "covered": 5413,
+     "recall": 0.9153225806451613,
+     "char_coverage": 0.9963187925639609
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 10,
+     "recall": 0.0,
+     "char_coverage": 0.008888888888888889
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 6,
+     "chars": 4102,
+     "covered": 2804,
+     "recall": 0.03592814371257485,
+     "char_coverage": 0.6835689907362262
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 49,
+     "chars": 3949,
+     "covered": 3503,
+     "recall": 0.3769230769230769,
+     "char_coverage": 0.8870600151937199
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 108,
+     "chars": 718,
+     "covered": 689,
+     "recall": 0.9310344827586207,
+     "char_coverage": 0.9596100278551533
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 12,
+     "chars": 1323,
+     "covered": 104,
+     "recall": 0.10619469026548672,
+     "char_coverage": 0.07860922146636433
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 5,
+     "chars": 726,
+     "covered": 30,
+     "recall": 0.0625,
+     "char_coverage": 0.04132231404958678
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 38,
+     "chars": 1436,
+     "covered": 1201,
+     "recall": 0.5671641791044776,
+     "char_coverage": 0.8363509749303621
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 0,
+     "chars": 258,
+     "covered": 13,
+     "recall": 0.0,
+     "char_coverage": 0.050387596899224806
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 0,
+     "chars": 78,
+     "covered": 13,
+     "recall": 0.0,
+     "char_coverage": 0.16666666666666666
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 5,
+     "chars": 168,
+     "covered": 164,
+     "recall": 0.8333333333333334,
+     "char_coverage": 0.9761904761904762
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 2,
+     "chars": 9,
+     "covered": 9,
+     "recall": 1.0,
+     "char_coverage": 1.0
+    }
+   },
+   "totals": {
+    "tp": 764,
+    "fn": 1400,
+    "fp": 1984,
+    "phi_chars": 27855,
+    "phi_exposed": 7672,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 15515,
+    "di_tp": 334,
+    "di_fn": 491,
+    "di_chars": 15418,
+    "di_exposed": 2542
+   }
+  },
+  "test/N3": {
+   "system": "N3_NAVAJO_HEALTH_c2",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.4972273567467652,
+    "E_exposure": 0.20287201579608688,
+    "O_overmask": 0.02809026281121182,
+    "P_strict": 0.35602094240837695,
+    "R_strict": 0.5027726432532348,
+    "F1_strict": 0.4168582375478927,
+    "DI_L_leak": 0.3236363636363636,
+    "DI_E_exposure": 0.08704112076793358
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.4776047498953767,
+      0.5175121319994695
+     ],
+     "E_exposure": [
+      0.187008500511893,
+      0.2192048299201646
+     ],
+     "O_overmask": [
+      0.025596532253467842,
+      0.03062937693239318
+     ],
+     "P_strict": [
+      0.3333200255509422,
+      0.37855890333919157
+     ],
+     "R_strict": [
+      0.48248786800053045,
+      0.5223952501046233
+     ],
+     "F1_strict": [
+      0.3966149568925422,
+      0.436641959743518
+     ],
+     "DI_L_leak": [
+      0.29396323278800274,
+      0.3537034168051603
+     ],
+     "DI_E_exposure": [
+      0.07294912246642364,
+      0.10287956311710661
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.4777694348028304,
+      0.5165917818740399
+     ],
+     "E_exposure": [
+      0.18692965406129453,
+      0.21932667591685082
+     ],
+     "O_overmask": [
+      0.025714417595654182,
+      0.030690431111301993
+     ],
+     "P_strict": [
+      0.33322129756713526,
+      0.37777815973415835
+     ],
+     "R_strict": [
+      0.4834082181259601,
+      0.5222305651971696
+     ],
+     "F1_strict": [
+      0.397065927131401,
+      0.43575714205842236
+     ],
+     "DI_L_leak": [
+      0.294962500873088,
+      0.3537501806358382
+     ],
+     "DI_E_exposure": [
+      0.07209002251132571,
+      0.1013641670326453
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.478404642183712,
+      0.5173997246367195
+     ],
+     "E_exposure": [
+      0.18738742444976522,
+      0.2193908682065372
+     ],
+     "O_overmask": [
+      0.025612188393238648,
+      0.03077762669164994
+     ],
+     "P_strict": [
+      0.3345290890042673,
+      0.3791537750709319
+     ],
+     "R_strict": [
+      0.4826002753632805,
+      0.5215953578162881
+     ],
+     "F1_strict": [
+      0.3973565091582442,
+      0.4365577314048194
+     ],
+     "DI_L_leak": [
+      0.29295205997608254,
+      0.3531631903479287
+     ],
+     "DI_E_exposure": [
+      0.07271280498907146,
+      0.10253468561289121
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.35602094240837695,
+    "strict_R": 0.5027726432532348,
+    "merged_P": 0.37602090819993467,
+    "merged_R": 0.5350999535099954,
+    "n_docs": 250
+   },
+   "ms_per_doc": 58.75,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 305,
+     "chars": 3132,
+     "covered": 2840,
+     "recall": 0.6979405034324943,
+     "char_coverage": 0.9067688378033205
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 216,
+     "chars": 5485,
+     "covered": 5335,
+     "recall": 0.8605577689243028,
+     "char_coverage": 0.9726526891522334
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 228,
+     "chars": 5433,
+     "covered": 5265,
+     "recall": 0.9193548387096774,
+     "char_coverage": 0.9690778575372723
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 11,
+     "chars": 4102,
+     "covered": 3156,
+     "recall": 0.0658682634730539,
+     "char_coverage": 0.7693807898586056
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 72,
+     "chars": 3949,
+     "covered": 3757,
+     "recall": 0.5538461538461539,
+     "char_coverage": 0.9513800962268929
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 111,
+     "chars": 718,
+     "covered": 717,
+     "recall": 0.9568965517241379,
+     "char_coverage": 0.9986072423398329
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 75,
+     "chars": 1323,
+     "covered": 1108,
+     "recall": 0.6637168141592921,
+     "char_coverage": 0.8374905517762661
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 5,
+     "chars": 726,
+     "covered": 30,
+     "recall": 0.0625,
+     "char_coverage": 0.04132231404958678
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 32,
+     "chars": 1436,
+     "covered": 1152,
+     "recall": 0.47761194029850745,
+     "char_coverage": 0.8022284122562674
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 21,
+     "chars": 258,
+     "covered": 251,
+     "recall": 0.875,
+     "char_coverage": 0.9728682170542635
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 5,
+     "chars": 78,
+     "covered": 78,
+     "recall": 0.7142857142857143,
+     "char_coverage": 1.0
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 5,
+     "chars": 168,
+     "covered": 168,
+     "recall": 0.8333333333333334,
+     "char_coverage": 1.0
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 2,
+     "chars": 9,
+     "covered": 9,
+     "recall": 1.0,
+     "char_coverage": 1.0
+    }
+   },
+   "totals": {
+    "tp": 1088,
+    "fn": 1076,
+    "fp": 1968,
+    "phi_chars": 27855,
+    "phi_exposed": 5651,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 13881,
+    "di_tp": 558,
+    "di_fn": 267,
+    "di_chars": 15418,
+    "di_exposed": 1342
+   },
+   "roundtrip_exact": 1.0,
+   "roundtrip_ws_normalised": 1.0
+  },
+  "test/N3r": {
+   "system": "N3r_NAVAJO_HEALTH_c2_NOSPACY",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.5369685767097967,
+    "E_exposure": 0.2389517142344283,
+    "O_overmask": 0.008982975046392139,
+    "P_strict": 0.6278195488721805,
+    "R_strict": 0.4630314232902033,
+    "F1_strict": 0.5329787234042552,
+    "DI_L_leak": 0.33939393939393936,
+    "DI_E_exposure": 0.10610974186016345
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.5170370189357235,
+      0.5569388391928437
+     ],
+     "E_exposure": [
+      0.22052773420952998,
+      0.2575439936333455
+     ],
+     "O_overmask": [
+      0.007229126374696039,
+      0.010879071997061167
+     ],
+     "P_strict": [
+      0.6021028453352604,
+      0.6546774809923526
+     ],
+     "R_strict": [
+      0.44306116080715624,
+      0.48296298106427643
+     ],
+     "F1_strict": [
+      0.5133114710090605,
+      0.5525709476085208
+     ],
+     "DI_L_leak": [
+      0.30935162429062957,
+      0.3714310515873016
+     ],
+     "DI_E_exposure": [
+      0.08963572151319314,
+      0.12435398292271366
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.5168774993617757,
+      0.5580485858131062
+     ],
+     "E_exposure": [
+      0.2199903825288386,
+      0.25799424211931055
+     ],
+     "O_overmask": [
+      0.007300197737082639,
+      0.010915496490100375
+     ],
+     "P_strict": [
+      0.6026310385473498,
+      0.652983377987051
+     ],
+     "R_strict": [
+      0.4419514141868937,
+      0.48312250063822426
+     ],
+     "F1_strict": [
+      0.5123853509985785,
+      0.5521733530145784
+     ],
+     "DI_L_leak": [
+      0.3103020177912779,
+      0.36988074014434824
+     ],
+     "DI_E_exposure": [
+      0.08884619709439394,
+      0.12339631622567553
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.5165792201575452,
+      0.5569508139790785
+     ],
+     "E_exposure": [
+      0.22003162191582215,
+      0.2574914755197892
+     ],
+     "O_overmask": [
+      0.007216500135320591,
+      0.011006803671168209
+     ],
+     "P_strict": [
+      0.6024297536711745,
+      0.6529697340055338
+     ],
+     "R_strict": [
+      0.4430491860209214,
+      0.48342077984245474
+     ],
+     "F1_strict": [
+      0.5129386310940698,
+      0.5527222588653838
+     ],
+     "DI_L_leak": [
+      0.30796450834144057,
+      0.36930561078775176
+     ],
+     "DI_E_exposure": [
+      0.09017200119369784,
+      0.12351513380385234
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.6278195488721805,
+    "strict_R": 0.4630314232902033,
+    "merged_P": 0.6683385579937304,
+    "merged_R": 0.49535315985130113,
+    "n_docs": 250
+   },
+   "ms_per_doc": 2.56,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 261,
+     "chars": 3132,
+     "covered": 2430,
+     "recall": 0.597254004576659,
+     "char_coverage": 0.7758620689655172
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 204,
+     "chars": 5485,
+     "covered": 5132,
+     "recall": 0.8127490039840638,
+     "char_coverage": 0.9356426618049225
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 230,
+     "chars": 5433,
+     "covered": 5242,
+     "recall": 0.9274193548387096,
+     "char_coverage": 0.9648444689858273
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 10,
+     "chars": 4102,
+     "covered": 3064,
+     "recall": 0.059880239520958084,
+     "char_coverage": 0.7469527059970746
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 70,
+     "chars": 3949,
+     "covered": 3725,
+     "recall": 0.5384615384615384,
+     "char_coverage": 0.9432767789313751
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 100,
+     "chars": 718,
+     "covered": 677,
+     "recall": 0.8620689655172413,
+     "char_coverage": 0.9428969359331476
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 75,
+     "chars": 1323,
+     "covered": 1108,
+     "recall": 0.6637168141592921,
+     "char_coverage": 0.8374905517762661
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 0,
+     "chars": 726,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 22,
+     "chars": 1436,
+     "covered": 933,
+     "recall": 0.3283582089552239,
+     "char_coverage": 0.6497214484679665
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 21,
+     "chars": 258,
+     "covered": 251,
+     "recall": 0.875,
+     "char_coverage": 0.9728682170542635
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 5,
+     "chars": 78,
+     "covered": 78,
+     "recall": 0.7142857142857143,
+     "char_coverage": 1.0
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 4,
+     "chars": 168,
+     "covered": 155,
+     "recall": 0.6666666666666666,
+     "char_coverage": 0.9226190476190477
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 0,
+     "chars": 9,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    }
+   },
+   "totals": {
+    "tp": 1002,
+    "fn": 1162,
+    "fp": 594,
+    "phi_chars": 27855,
+    "phi_exposed": 6656,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 4439,
+    "di_tp": 545,
+    "di_fn": 280,
+    "di_chars": 15418,
+    "di_exposed": 1636
+   },
+   "roundtrip_exact": 1.0,
+   "roundtrip_ws_normalised": 1.0
+  },
+  "test/H4": {
+   "system": "H4_HYBRID_c2",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.5743992606284658,
+    "E_exposure": 0.1697720337461856,
+    "O_overmask": 0.03554335970147139,
+    "P_strict": 0.30446280991735536,
+    "R_strict": 0.4256007393715342,
+    "F1_strict": 0.3549816920408556,
+    "DI_L_leak": 0.4872727272727273,
+    "DI_E_exposure": 0.05623297444545337
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.5514231025196653,
+      0.5962715683749679
+     ],
+     "E_exposure": [
+      0.1552896719967295,
+      0.1843657322450425
+     ],
+     "O_overmask": [
+      0.032644279801513285,
+      0.03838469795121648
+     ],
+     "P_strict": [
+      0.2815988708669974,
+      0.32770368835152985
+     ],
+     "R_strict": [
+      0.4037284316250322,
+      0.44857689748033464
+     ],
+     "F1_strict": [
+      0.3332647826899673,
+      0.37668905555254434
+     ],
+     "DI_L_leak": [
+      0.45378843938382923,
+      0.5205314009661836
+     ],
+     "DI_E_exposure": [
+      0.04520471145755702,
+      0.06810007833464805
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.5513748000444118,
+      0.5953712259962259
+     ],
+     "E_exposure": [
+      0.1550985552925366,
+      0.18525842554012065
+     ],
+     "O_overmask": [
+      0.03284044145026451,
+      0.0383883945028772
+     ],
+     "P_strict": [
+      0.2809233201940387,
+      0.3268410423359952
+     ],
+     "R_strict": [
+      0.404628774003774,
+      0.44862519995558825
+     ],
+     "F1_strict": [
+      0.3335244619936328,
+      0.3764531626115578
+     ],
+     "DI_L_leak": [
+      0.4541206095558493,
+      0.5178185532175412
+     ],
+     "DI_E_exposure": [
+      0.04559051436161683,
+      0.06797108481958922
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.5514470530369497,
+      0.5968956697076433
+     ],
+     "E_exposure": [
+      0.15518565449719726,
+      0.18475982832744242
+     ],
+     "O_overmask": [
+      0.03273550199500522,
+      0.038511726868197295
+     ],
+     "P_strict": [
+      0.2814847055419261,
+      0.3284214742463636
+     ],
+     "R_strict": [
+      0.4031043302923567,
+      0.4485529469630502
+     ],
+     "F1_strict": [
+      0.3339802347418785,
+      0.3766998366622086
+     ],
+     "DI_L_leak": [
+      0.45378125702835886,
+      0.518750946969697
+     ],
+     "DI_E_exposure": [
+      0.045498511863330864,
+      0.06783403628944856
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.30446280991735536,
+    "strict_R": 0.4256007393715342,
+    "merged_P": 0.319750246467302,
+    "merged_R": 0.4523477452347745,
+    "n_docs": 250
+   },
+   "ms_per_doc": 105.76,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 284,
+     "chars": 3132,
+     "covered": 3029,
+     "recall": 0.6498855835240275,
+     "char_coverage": 0.9671136653895275
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 14,
+     "recall": 0.0,
+     "char_coverage": 0.007268951194184839
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 90,
+     "chars": 5485,
+     "covered": 5484,
+     "recall": 0.35856573705179284,
+     "char_coverage": 0.9998176845943483
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 218,
+     "chars": 5433,
+     "covered": 5413,
+     "recall": 0.8790322580645161,
+     "char_coverage": 0.9963187925639609
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 10,
+     "recall": 0.0,
+     "char_coverage": 0.008888888888888889
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 12,
+     "chars": 4102,
+     "covered": 3406,
+     "recall": 0.0718562874251497,
+     "char_coverage": 0.8303266699171136
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 53,
+     "chars": 3949,
+     "covered": 3887,
+     "recall": 0.4076923076923077,
+     "char_coverage": 0.9842998227399342
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 110,
+     "chars": 718,
+     "covered": 718,
+     "recall": 0.9482758620689655,
+     "char_coverage": 1.0
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 75,
+     "chars": 1323,
+     "covered": 1108,
+     "recall": 0.6637168141592921,
+     "char_coverage": 0.8374905517762661
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 5,
+     "chars": 726,
+     "covered": 30,
+     "recall": 0.0625,
+     "char_coverage": 0.04132231404958678
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 41,
+     "chars": 1436,
+     "covered": 1340,
+     "recall": 0.6119402985074627,
+     "char_coverage": 0.9331476323119777
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 21,
+     "chars": 258,
+     "covered": 251,
+     "recall": 0.875,
+     "char_coverage": 0.9728682170542635
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 5,
+     "chars": 78,
+     "covered": 78,
+     "recall": 0.7142857142857143,
+     "char_coverage": 1.0
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 5,
+     "chars": 168,
+     "covered": 168,
+     "recall": 0.8333333333333334,
+     "char_coverage": 1.0
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 2,
+     "chars": 9,
+     "covered": 9,
+     "recall": 1.0,
+     "char_coverage": 1.0
+    }
+   },
+   "totals": {
+    "tp": 921,
+    "fn": 1243,
+    "fp": 2104,
+    "phi_chars": 27855,
+    "phi_exposed": 4729,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 17564,
+    "di_tp": 423,
+    "di_fn": 402,
+    "di_chars": 15418,
+    "di_exposed": 867
+   },
+   "roundtrip_exact": 1.0,
+   "roundtrip_ws_normalised": 1.0
+  },
+  "test/H4r": {
+   "system": "H4r_HYBRID_c2_NOSPACY",
+   "split": "test",
+   "n_docs": 250,
+   "point": {
+    "L_leak": 0.5753234750462107,
+    "E_exposure": 0.16865912762520194,
+    "O_overmask": 0.0354765793057672,
+    "P_strict": 0.30521421454666225,
+    "R_strict": 0.42467652495378927,
+    "F1_strict": 0.35516908212560394,
+    "DI_L_leak": 0.4872727272727273,
+    "DI_E_exposure": 0.05422233752756518
+   },
+   "ci95": {
+    "seed0": {
+     "L_leak": [
+      0.5525114155251142,
+      0.5974117199518268
+     ],
+     "E_exposure": [
+      0.15423711167794993,
+      0.18342079098393277
+     ],
+     "O_overmask": [
+      0.03257385065902291,
+      0.0383129464671174
+     ],
+     "P_strict": [
+      0.2824617765787523,
+      0.3290189062248224
+     ],
+     "R_strict": [
+      0.4025882800481732,
+      0.4474885844748858
+     ],
+     "F1_strict": [
+      0.33306770846555994,
+      0.37661744580347467
+     ],
+     "DI_L_leak": [
+      0.45378843938382923,
+      0.5205314009661836
+     ],
+     "DI_E_exposure": [
+      0.043684873004413476,
+      0.06592419774884327
+     ]
+    },
+    "seed1": {
+     "L_leak": [
+      0.5524812515505265,
+      0.5963886452148303
+     ],
+     "E_exposure": [
+      0.15393138882295557,
+      0.18420437496007644
+     ],
+     "O_overmask": [
+      0.03277755976741012,
+      0.03833358382757321
+     ],
+     "P_strict": [
+      0.2816355095533517,
+      0.3276683316999466
+     ],
+     "R_strict": [
+      0.4036113547851697,
+      0.4475187484494735
+     ],
+     "F1_strict": [
+      0.33352986577238136,
+      0.3765202768711962
+     ],
+     "DI_L_leak": [
+      0.4541206095558493,
+      0.5178185532175412
+     ],
+     "DI_E_exposure": [
+      0.04345902346972759,
+      0.06571666489138187
+     ]
+    },
+    "seed2": {
+     "L_leak": [
+      0.5523925507850119,
+      0.5977456554609665
+     ],
+     "E_exposure": [
+      0.15393489408674266,
+      0.1835477824368073
+     ],
+     "O_overmask": [
+      0.03266380351595762,
+      0.038464357146322875
+     ],
+     "P_strict": [
+      0.2821262658476966,
+      0.32938524726478574
+     ],
+     "R_strict": [
+      0.4022543445390335,
+      0.447607449214988
+     ],
+     "F1_strict": [
+      0.3343065626481439,
+      0.3772679972038581
+     ],
+     "DI_L_leak": [
+      0.45378125702835886,
+      0.518750946969697
+     ],
+     "DI_E_exposure": [
+      0.04372253461112326,
+      0.06551932545437178
+     ]
+    }
+   },
+   "official": {
+    "strict_P": 0.30521421454666225,
+    "strict_R": 0.42467652495378927,
+    "merged_P": 0.3211221122112211,
+    "merged_R": 0.45297951582867785,
+    "n_docs": 250
+   },
+   "ms_per_doc": 49.81,
+   "per_label": {
+    "TERRITORIO": {
+     "n": 437,
+     "hit": 282,
+     "chars": 3132,
+     "covered": 3029,
+     "recall": 0.6453089244851259,
+     "char_coverage": 0.9671136653895275
+    },
+    "EDAD_SUJETO_ASISTENCIA": {
+     "n": 269,
+     "hit": 0,
+     "chars": 1926,
+     "covered": 14,
+     "recall": 0.0,
+     "char_coverage": 0.007268951194184839
+    },
+    "NOMBRE_PERSONAL_SANITARIO": {
+     "n": 251,
+     "hit": 90,
+     "chars": 5485,
+     "covered": 5484,
+     "recall": 0.35856573705179284,
+     "char_coverage": 0.9998176845943483
+    },
+    "CORREO_ELECTRONICO": {
+     "n": 248,
+     "hit": 218,
+     "chars": 5433,
+     "covered": 5413,
+     "recall": 0.8790322580645161,
+     "char_coverage": 0.9963187925639609
+    },
+    "SEXO_SUJETO_ASISTENCIA": {
+     "n": 218,
+     "hit": 0,
+     "chars": 1125,
+     "covered": 10,
+     "recall": 0.0,
+     "char_coverage": 0.008888888888888889
+    },
+    "CALLE": {
+     "n": 167,
+     "hit": 12,
+     "chars": 4102,
+     "covered": 3450,
+     "recall": 0.0718562874251497,
+     "char_coverage": 0.841053144807411
+    },
+    "HOSPITAL": {
+     "n": 130,
+     "hit": 53,
+     "chars": 3949,
+     "covered": 3887,
+     "recall": 0.4076923076923077,
+     "char_coverage": 0.9842998227399342
+    },
+    "PAIS": {
+     "n": 116,
+     "hit": 110,
+     "chars": 718,
+     "covered": 718,
+     "recall": 0.9482758620689655,
+     "char_coverage": 1.0
+    },
+    "FECHAS": {
+     "n": 113,
+     "hit": 75,
+     "chars": 1323,
+     "covered": 1108,
+     "recall": 0.6637168141592921,
+     "char_coverage": 0.8374905517762661
+    },
+    "FAMILIARES_SUJETO_ASISTENCIA": {
+     "n": 80,
+     "hit": 5,
+     "chars": 726,
+     "covered": 30,
+     "recall": 0.0625,
+     "char_coverage": 0.04132231404958678
+    },
+    "INSTITUCION": {
+     "n": 67,
+     "hit": 41,
+     "chars": 1436,
+     "covered": 1340,
+     "recall": 0.6119402985074627,
+     "char_coverage": 0.9331476323119777
+    },
+    "NUMERO_TELEFONO": {
+     "n": 24,
+     "hit": 21,
+     "chars": 258,
+     "covered": 251,
+     "recall": 0.875,
+     "char_coverage": 0.9728682170542635
+    },
+    "ID_SUJETO_ASISTENCIA": {
+     "n": 13,
+     "hit": 0,
+     "chars": 119,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "PROFESION": {
+     "n": 9,
+     "hit": 0,
+     "chars": 160,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "OTROS_SUJETO_ASISTENCIA": {
+     "n": 7,
+     "hit": 0,
+     "chars": 86,
+     "covered": 0,
+     "recall": 0.0,
+     "char_coverage": 0.0
+    },
+    "NUMERO_FAX": {
+     "n": 7,
+     "hit": 5,
+     "chars": 78,
+     "covered": 78,
+     "recall": 0.7142857142857143,
+     "char_coverage": 1.0
+    },
+    "CENTRO_SALUD": {
+     "n": 6,
+     "hit": 5,
+     "chars": 168,
+     "covered": 168,
+     "recall": 0.8333333333333334,
+     "char_coverage": 1.0
+    },
+    "NOMBRE_SUJETO_ASISTENCIA": {
+     "n": 2,
+     "hit": 2,
+     "chars": 9,
+     "covered": 9,
+     "recall": 1.0,
+     "char_coverage": 1.0
+    }
+   },
+   "totals": {
+    "tp": 919,
+    "fn": 1245,
+    "fp": 2092,
+    "phi_chars": 27855,
+    "phi_exposed": 4698,
+    "nonphi_chars": 494157,
+    "nonphi_masked": 17531,
+    "di_tp": 423,
+    "di_fn": 402,
+    "di_chars": 15418,
+    "di_exposed": 836
+   },
+   "roundtrip_exact": 1.0,
+   "roundtrip_ws_normalised": 1.0
+  }
+ }
+}

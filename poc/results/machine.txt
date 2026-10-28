@@ -1,0 +1,5 @@
+4
+Model name:                              AMD Ryzen 7 3700X 8-Core Processor
+               total        used        free      shared  buff/cache   available
+Mem:              15          10           2           0           3           5
+wall_seconds=786

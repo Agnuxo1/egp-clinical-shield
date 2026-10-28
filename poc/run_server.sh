@@ -6,7 +6,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "$HERE"
 mkdir -p results data
 
-VENV=/home/ai/venvs/mitsolve
+VENV="${VENV:-$HERE/.venv}"  # E007 ran with VENV=/home/ai/venvs/mitsolve
 if [ ! -x "$VENV/bin/python" ]; then
   python3 -m venv "$VENV"
   "$VENV/bin/pip" install -q --upgrade pip

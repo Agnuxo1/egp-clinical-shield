@@ -8,3 +8,7 @@ __pycache__/
 .venv/
 _job/
 _local_report/
+poc/results/*/*/
+poc/data/
+poc/.venv/
+_data*/

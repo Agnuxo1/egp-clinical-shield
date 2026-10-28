@@ -35,6 +35,8 @@ _FIELD_RE = re.compile(
     r"(?im)(?:^|(?<=[\s.|]))(?P<key>" + _ALL_KEYS + r")\s*:\s*(?P<val>[^\n:]*?)"
     r"(?=\s{2,}|\s*(?:" + _ALL_KEYS + r"|edad|sexo)\s*:|\s*\.?\s*$|\.\s)"
 )
+# c3 (E009 audit): a byte-order mark before the first "Nombre:" hid the field
+_FIELD_RE_C3 = re.compile(_FIELD_RE.pattern.replace(r"(?<=[\s.|])", r"(?<=[\s.|\ufeff])"), _FIELD_RE.flags)
 _KEY_TYPE = [(re.compile(r"(?i)^(?:" + "|".join(ks) + r")$"), t) for t, ks in _FIELD_KEYS.items()]
 
 # --- c1: narrative patterns ------------------------------------------------------------------
@@ -131,6 +133,7 @@ class HealthPatterns:
     def __init__(self, cycle: str = "c1"):
         self.cycle = cycle
         self.c2 = cycle >= "c2"
+        self.c3 = cycle >= "c3"
 
     def _pieces(self, text: str, s: int, e: int) -> list[tuple[int, int]]:
         """c2: split a span where a new entity starts; drop pieces that are not PHI (department, labels)."""
@@ -161,7 +164,7 @@ class HealthPatterns:
                     tier = _PRIORITY[kind]
                 out.append((tier, a, b, etype))
 
-        for m in _FIELD_RE.finditer(text):
+        for m in (_FIELD_RE_C3 if self.c3 else _FIELD_RE).finditer(text):
             key = re.sub(r"\s+", " ", m.group("key").strip())
             etype = next((t for rx, t in _KEY_TYPE if rx.match(key)), EntityType.MRN)
             add("field", m.start("val"), m.end("val"), etype)
@@ -187,6 +190,11 @@ class HealthPatterns:
             for ent in det._SPACY_NLP(text).ents:
                 if ent.label_ in _SPACY_EXTRA:
                     add("spacy", ent.start_char, ent.end_char, _SPACY_EXTRA[ent.label_])
+        if self.c3:
+            # c3 (E009 audit): v0.1.0 drops an e-mail or ID that overlaps its false "Dr." address before
+            # the health pack can discard that address, so take the high-precision patterns before deduplication
+            navajo_ents = list(navajo_ents) + [e for e in det._regex_entities(text)
+                                               if e.entity_type != EntityType.PERSON_NAME]
         for e in navajo_ents:
             if self.c2 and e.entity_type == EntityType.ADDRESS:
                 if _DOCTOR_ADDR.match(e.text):
