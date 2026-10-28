@@ -1,0 +1,7 @@
+_data/
+_tools/
+_local_smoke/
+_local*/
+__pycache__/
+*.pyc
+.venv/
