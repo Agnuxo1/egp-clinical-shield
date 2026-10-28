@@ -34,7 +34,7 @@ reply = client.chat.completions.create(model="…", messages=[{"role": "user", "
 
 - Detection in the default mode takes under 3 ms per note on a 2019 desktop CPU (Ryzen 7 3700X); no GPU and no model. Not yet measured on a laptop.
 - Masking is lossless: with an echo model every test note comes back exactly. With a real model, restoration depends on the model keeping the placeholders, which we have not measured.
-- The OpenAI and Anthropic wrappers mask the text of every message and text block of the conversation (earlier replies carry restored names) with one session per request, so the same person keeps the same placeholder. Content they cannot mask (images, tool calls, extra message fields) is refused before anything is sent. The mapping is destroyed even if the provider call fails. The LangChain wrapper accepts plain-text prompts only.
+- The OpenAI and Anthropic wrappers mask the text of every message and text block of the conversation (earlier replies carry restored names) with one session per request, so the same person keeps the same placeholder. Content they cannot mask (images, tool calls, extra message fields, request arguments such as `tools` or `extra_body`) is refused before anything is sent, and other client APIs (`responses`, `files` …) are not exposed. The mapping is destroyed even if the provider call fails. The LangChain wrapper accepts plain-text prompts only.
 
 ## Results
 

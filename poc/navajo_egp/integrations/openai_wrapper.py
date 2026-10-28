@@ -23,7 +23,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from navajo_egp.integrations._masking import mask_request
+from navajo_egp.integrations._masking import OPENAI_ARGS, blocked, check_args, mask_request
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +41,7 @@ class _NavajoChatCompletions:
                 choice.message.content = self._egp.deanonymize(choice.message.content, session)
 
     def create(self, **kwargs: Any) -> Any:
+        check_args(kwargs, OPENAI_ARGS)
         kwargs["messages"], _, session = mask_request(self._egp, kwargs.get("messages", []))
         # the session is destroyed even if the provider call fails
         try:
@@ -54,6 +55,7 @@ class _NavajoChatCompletions:
 
     async def acreate(self, **kwargs: Any) -> Any:
         """Async variant."""
+        check_args(kwargs, OPENAI_ARGS)
         kwargs["messages"], _, session = mask_request(self._egp, kwargs.get("messages", []))
         try:
             response = await self._original.acreate(**kwargs)
@@ -84,4 +86,5 @@ class NavajoOpenAI:
         self.chat = _NavajoChatNamespace(client.chat, egp)
 
     def __getattr__(self, name: str) -> Any:
-        return getattr(self._client, name)
+        # other client APIs (responses, files …) would bypass masking (E016)
+        blocked(name)

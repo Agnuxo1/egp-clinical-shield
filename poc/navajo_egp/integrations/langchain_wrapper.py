@@ -128,4 +128,5 @@ class NavajoChatModel:
 
     # Pass through everything else (temperature, streaming, bind_tools, etc.)
     def __getattr__(self, name: str) -> Any:
-        return getattr(self._llm, name)
+        # stream, batch … would bypass masking (E016)
+        raise AttributeError(f"'{name}' is not protected by the shield")

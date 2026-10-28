@@ -24,7 +24,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from navajo_egp.integrations._masking import mask_request
+from navajo_egp.integrations._masking import ANTHROPIC_ARGS, blocked, check_args, mask_request
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +37,7 @@ class _NavajoMessages:
         self._egp = egp
 
     def _prepare(self, kwargs: dict) -> Any:
+        check_args(kwargs, ANTHROPIC_ARGS)
         messages, system, session = mask_request(self._egp, kwargs.get("messages", []), kwargs.get("system"))
         kwargs["messages"] = messages
         if "system" in kwargs:
@@ -84,4 +85,5 @@ class NavajoAnthropic:
         self.messages = _NavajoMessages(client.messages, egp)
 
     def __getattr__(self, name: str) -> Any:
-        return getattr(self._client, name)
+        # other client APIs would bypass masking (E016)
+        blocked(name)

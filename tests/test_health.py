@@ -181,6 +181,40 @@ def test_unmaskable_content_is_refused_before_sending(monkeypatch):
     assert destroyed and all(s.destroyed for s in destroyed)
 
 
+def test_unmasked_arguments_and_other_apis_are_blocked():
+    """E016: free-text arguments and other client APIs would bypass masking, so they are refused."""
+    import pytest
+    from types import SimpleNamespace
+    from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
+    from navajo_egp.integrations.anthropic_wrapper import NavajoAnthropic
+    from navajo_egp.integrations.langchain_wrapper import NavajoChatModel
+    from deid.shield import ClinicalShield
+
+    received = []
+    raw = _fake_openai(received)
+    raw.responses = SimpleNamespace(create=lambda **kw: received.append(kw))
+    client = NavajoOpenAI(raw, ClinicalShield())
+    msg = [{"role": "user", "content": "Contact lucia.ferrer@example.com"}]
+    with pytest.raises(TypeError):
+        client.chat.completions.create(model="any", messages=msg, extra_body={"note": "lucia.ferrer@example.com"})
+    with pytest.raises(AttributeError):
+        client.responses.create(model="any", input="Contact lucia.ferrer@example.com")
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            received.append(kwargs)
+
+    anthropic = NavajoAnthropic(SimpleNamespace(messages=FakeMessages(), beta=None), ClinicalShield())
+    with pytest.raises(TypeError):
+        anthropic.messages.create(model="any", max_tokens=10, messages=msg,
+                                  tools=[{"name": "t", "description": "for lucia.ferrer@example.com"}])
+    with pytest.raises(AttributeError):
+        anthropic.beta
+    with pytest.raises(AttributeError):
+        NavajoChatModel(llm=SimpleNamespace(stream=print), egp=ClinicalShield()).stream
+    assert received == []
+
+
 def test_sessions_destroyed_when_provider_fails(monkeypatch):
     import pytest
     from navajo_egp.integrations.openai_wrapper import NavajoOpenAI

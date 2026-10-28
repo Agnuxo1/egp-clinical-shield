@@ -13,6 +13,21 @@ from typing import Any
 
 _MESSAGE_FIELDS = {"role", "content"}
 _TEXT_BLOCK_FIELDS = {"type", "text", "cache_control"}
+# request arguments that carry no free text; anything else (tools, extra_body, metadata, user,
+# response_format, stream …) is refused, because the wrapper would forward it unmasked (E016)
+OPENAI_ARGS = {"model", "messages", "temperature", "top_p", "max_tokens", "max_completion_tokens", "n", "seed",
+               "presence_penalty", "frequency_penalty", "timeout"}
+ANTHROPIC_ARGS = {"model", "messages", "system", "max_tokens", "temperature", "top_p", "top_k", "timeout"}
+
+
+def check_args(kwargs: dict, allowed: set) -> None:
+    extra = set(kwargs) - allowed
+    if extra:
+        raise TypeError(f"arguments {sorted(extra)} cannot be masked; refusing to send them")
+
+
+def blocked(name: str):
+    raise AttributeError(f"'{name}' is not protected by the shield; call the original client knowingly")
 
 
 def mask_request(egp: Any, messages: list, system: Any = None) -> tuple[list, Any, Any]:

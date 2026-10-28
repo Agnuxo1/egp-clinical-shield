@@ -35,7 +35,8 @@ rm -rf data/meddocan data/meddocan_noheader
 [ -d data/ev ] || git clone -q https://github.com/PlanTL-SANIDAD/MEDDOCAN-Evaluation-Script.git data/ev
 git -C data/ev checkout -q 843152c475e7118171028badd16f6342c5560e0f
 test "$(git -C data/ev rev-parse HEAD)" = 843152c475e7118171028badd16f6342c5560e0f
-test -z "$(git -C data/ev status --porcelain --untracked-files=no)"  # official scorer unmodified
+git -C data/ev clean -xfdq  # drop untracked files (and bytecode from earlier runs)
+test -z "$(git -C data/ev status --porcelain)"  # official scorer unmodified, nothing extra
 
 { nproc; lscpu | grep -m1 "Model name"; free -g | head -2; } > results/machine.txt
 SECONDS=0
