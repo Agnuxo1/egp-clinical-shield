@@ -57,6 +57,18 @@ class Navajo:
         return [(e.entity_type.value, e.start, e.end) for e in self.entities(text)]
 
 
+class PackOnly:
+    """P3r (E012 ablation): the health pack's own patterns without navajo-egp's core detectors."""
+
+    def __init__(self, cycle: str):
+        from deid.health import HealthPatterns
+        self.hp = HealthPatterns(cycle)
+        self.name = f"P3r_PACK_ONLY_{cycle}"
+
+    def spans(self, text: str) -> list[Span]:
+        return [(e.entity_type.value, e.start, e.end) for e in self.hp.combine(text, [])]
+
+
 class Presidio:
     """C1: Microsoft Presidio analyzer configured for Spanish."""
     name = "C1_PRESIDIO"
@@ -110,15 +122,9 @@ class Union:
         return merge_overlaps(allspans)
 
 
-def roundtrip(text: str, spans: list[Span], lossless: bool = False) -> tuple[bool, bool, str]:
-    """Mask with the NAVAJO session and restore (identity 'LLM').
-
-    lossless=False reproduces v0.1.0; True uses the health pack's anonymizer.
-    Returns (exact, equal_after_whitespace_normalisation, anonymised_text)."""
-    import re
-    from navajo_egp.anonymizer import Anonymizer
+def to_entities(text: str, spans: list[Span]):
+    """Spans from any system -> navajo-egp DetectedEntity list (overlaps merged)."""
     from navajo_egp.entities import DetectedEntity, EntityType
-    from navajo_egp.session import EGPSession
 
     ents = []
     for label, start, end in merge_overlaps(spans):
@@ -127,6 +133,19 @@ def roundtrip(text: str, spans: list[Span], lossless: bool = False) -> tuple[boo
         except ValueError:
             etype = EntityType.PERSON_NAME if "NOMBRE" in label or label == "PERSON" else EntityType.MRN
         ents.append(DetectedEntity(text=text[start:end], entity_type=etype, start=start, end=end))
+    return ents
+
+
+def roundtrip(text: str, spans: list[Span], lossless: bool = False) -> tuple[bool, bool, str]:
+    """Mask with the NAVAJO session and restore (identity 'LLM').
+
+    lossless=False reproduces v0.1.0; True uses the health pack's anonymizer.
+    Returns (exact, equal_after_whitespace_normalisation, anonymised_text)."""
+    import re
+    from navajo_egp.anonymizer import Anonymizer
+    from navajo_egp.session import EGPSession
+
+    ents = to_entities(text, spans)
     session = EGPSession()
     if lossless:
         from deid.health import lossless_anonymizer

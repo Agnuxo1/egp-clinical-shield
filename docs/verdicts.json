@@ -1,11 +1,11 @@
 {
  "H1  NAVAJO 0.1 vs Presidio": [
-  0.016873875212574496,
+  0.01387097263745768,
   false,
   true
  ],
  "H2  health pack vs 0.1 (exposure)": [
-  -0.21689581180958437,
+  -0.22327402343179362,
   true,
   false
  ],
@@ -15,27 +15,27 @@
   true
  ],
  "H3a hybrid vs NAVAJO health": [
-  -0.02296630178149818,
+  -0.02428179017498064,
   true,
   false
  ],
  "H3b hybrid vs Presidio": [
-  -0.20790199283438177,
+  -0.2179442429393107,
   true,
   false
  ],
  "Abl. NAVAJO health vs Presidio": [
-  -0.18493569105288357,
+  -0.19366245276433006,
   true,
   false
  ],
  "Abl. NAVAJO health vs Presidio (direct ids)": [
-  -0.2275592627214113,
+  -0.2423792470958162,
   true,
   false
  ],
  "Abl. hybrid vs Presidio (direct ids)": [
-  -0.24071810359291484,
+  -0.2564197746528081,
   true,
   false
  ],
@@ -45,17 +45,17 @@
   true
  ],
  "Abl. spaCy inside hybrid": [
-  0.0005778724387867917,
+  0.0007588059429681493,
   false,
   true
  ],
  "Abl. NAVAJO inside hybrid, no spaCy": [
-  -0.20847986527316853,
+  -0.21870304888227884,
   true,
   false
  ],
  "Abl. Presidio inside hybrid, no spaCy": [
-  -0.04401736919444581,
+  -0.04502754465572975,
   true,
   false
  ],
@@ -65,7 +65,7 @@
   true
  ],
  "Abl. NAVAJO health no spaCy vs Presidio": [
-  -0.16446249607872274,
+  -0.1736755042265491,
   true,
   false
  ],

@@ -2,15 +2,15 @@
 
 | System | Notes with ≥1 direct identifier fully visible | Notes with the patient's name fully visible | Notes with ≥1 direct-identifier character visible |
 |---|---|---|---|
-| NAVAJO 0.1 + spaCy | 90.0 % [86.0–93.6] | 17.2 % [12.8–22.0] | 100.0 % [100.0–100.0] |
-| Presidio (control) | 97.2 % [94.8–99.2] | 10.4 % [6.8–14.4] | 100.0 % [100.0–100.0] |
-| NAVAJO health, no spaCy | 15.6 % [11.2–20.4] | 3.6 % [1.6–6.0] | 69.2 % [63.2–75.2] |
-| NAVAJO health | 12.0 % [8.0–16.0] | 0.4 % [0.0–1.2] | 66.0 % [60.0–72.0] |
-| Hybrid NAVAJO + Presidio, no spaCy | 9.6 % [6.0–13.2] | 0.4 % [0.0–1.2] | 54.4 % [48.0–60.8] |
+| navajo-egp 0.1 + spaCy | 93.6 % [90.4–96.4] | 17.6 % [13.2–22.4] | 100.0 % [100.0–100.0] |
+| Presidio (control) | 100.0 % [100.0–100.0] | 10.4 % [6.8–14.4] | 100.0 % [100.0–100.0] |
+| Shield default (health pack) | 24.8 % [19.6–30.4] | 3.6 % [1.6–6.0] | 69.2 % [63.2–75.2] |
+| Health pack + spaCy | 18.8 % [14.0–23.6] | 0.4 % [0.0–1.2] | 66.0 % [60.0–72.0] |
+| Shield max (pack + Presidio) | 13.6 % [9.6–18.0] | 0.4 % [0.0–1.2] | 54.4 % [48.0–60.8] |
 
 95 % bootstrap intervals over notes (2,000 resamples, seed 0). Direct identifiers as pre-registered (names, ID numbers, phone, fax, e-mail, street, URL, dates).
 
-## Audit of 30 leaked direct identifiers (NAVAJO health, no spaCy, random sample of 266, seed 20261028)
+## Audit of 30 leaked direct identifiers (Shield default (health pack), random sample of 266, seed 20261028)
 
 Synthetic data from MEDDOCAN; no real person.
 
@@ -40,8 +40,8 @@ Synthetic data from MEDDOCAN; no real person.
 | ID_SUJETO_ASISTENCIA | `afgano` | yes | …, de 29 años (165 cm, 68 Kg),  |
 | ID_SUJETO_ASISTENCIA | `caucásico` | yes | …e clínico del paciente: Varón  |
 | ID_SUJETO_ASISTENCIA | `casado` | yes | …: Paciente varón, de 47 años,  |
-| ID_SUJETO_ASISTENCIA | `raza negra` | partly | …aciente de sexo masculino, de  |
-| NOMBRE_PERSONAL_SANITARIO | `Raquel Ridruejo Sáez` | partly | …cuadro séptico. Remitido por:  |
+| ID_SUJETO_ASISTENCIA | `raza negra` | yes | …aciente de sexo masculino, de  |
+| NOMBRE_PERSONAL_SANITARIO | `Raquel Ridruejo Sáez` | yes | …cuadro séptico. Remitido por:  |
 | NOMBRE_PERSONAL_SANITARIO | `Eduardo Sánchez de Badia` | partly | …lta definitiva. Remitido por:  |
 | NOMBRE_PERSONAL_SANITARIO | `María del Rosario García Luzardo` | partly | …comotor normal. Remitido por:  |
 | NOMBRE_SUJETO_ASISTENCIA | `Jorge` | yes | …﻿Nombre:  |
@@ -49,10 +49,10 @@ Synthetic data from MEDDOCAN; no real person.
 
 All leaks by label (count, fully visible):
 
-- CALLE: 163 (1 fully visible)
-- FECHAS: 38 (20 fully visible)
-- NOMBRE_PERSONAL_SANITARIO: 30 (0 fully visible)
-- ID_SUJETO_ASISTENCIA: 13 (9 fully visible)
+- CALLE: 163 (7 fully visible)
+- FECHAS: 38 (30 fully visible)
+- NOMBRE_PERSONAL_SANITARIO: 30 (11 fully visible)
+- ID_SUJETO_ASISTENCIA: 13 (13 fully visible)
 - NOMBRE_SUJETO_ASISTENCIA: 10 (10 fully visible)
 - CORREO_ELECTRONICO: 9 (9 fully visible)
 - ID_TITULACION_PERSONAL_SANITARIO: 2 (0 fully visible)

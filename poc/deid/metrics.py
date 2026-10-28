@@ -29,8 +29,10 @@ def doc_counts(text: str, gold, pred) -> dict:
         if is_direct(label):
             is_di[s:e] = True
     nonspace = np.array([not c.isspace() for c in text], dtype=bool) if text else np.zeros(0, bool)
-    phi = is_phi & nonspace
-    di = is_di & nonspace
+    # E and DI_E count every character inside gold spans, as pre-registered (E011: an earlier version
+    # skipped whitespace inside spans); O counts non-whitespace non-PHI characters, as pre-registered.
+    phi = is_phi
+    di = is_di
     nonphi = (~is_phi) & nonspace
     di_gold = {(s, e) for label, s, e in gold if is_direct(label)}
     return {

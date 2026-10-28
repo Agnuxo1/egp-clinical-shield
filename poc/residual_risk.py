@@ -18,8 +18,8 @@ from deid import metrics as M  # noqa: E402
 from deid.data import load_split  # noqa: E402
 
 SYSTEMS = ["S2", "C1", "N3r", "N3", "H4r"]
-NAMES = {"S2": "NAVAJO 0.1 + spaCy", "C1": "Presidio (control)", "N3r": "NAVAJO health, no spaCy",
-         "N3": "NAVAJO health", "H4r": "Hybrid NAVAJO + Presidio, no spaCy"}
+NAMES = {"S2": "navajo-egp 0.1 + spaCy", "C1": "Presidio (control)", "N3r": "Shield default (health pack)",
+         "N3": "Health pack + spaCy", "H4r": "Shield max (pack + Presidio)"}
 
 
 def read_pred(path: str):
@@ -63,14 +63,17 @@ def main():
             for lab, s, e in doc.gold:
                 if not M.is_direct(lab):
                     continue
+                # fully visible: no character of the identifier is masked (E011: an earlier version
+                # treated whitespace as masked, so multi-word identifiers never counted as fully visible)
+                fully = not cov[s:e].any()
                 seen = (~cov[s:e]) & np.array([not c.isspace() for c in doc.text[s:e]])
-                if seen.all():
+                if fully:
                     full = True
                     name_full |= lab == "NOMBRE_SUJETO_ASISTENCIA"
                 if seen.any():
                     part = True
                     if sid == args.audit:
-                        leaks.append((doc.doc_id, lab, doc.text[s:e], bool(seen.all()),
+                        leaks.append((doc.doc_id, lab, doc.text[s:e], fully,
                                       doc.text[max(0, s - 30):s].replace("\n", " ")))
             any_di.append(full)
             any_name.append(name_full)

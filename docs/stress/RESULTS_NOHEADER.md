@@ -4,38 +4,38 @@ Environment: `{"python": "3.13.7", "platform": "Windows-10-10.0.19045-SP0", "num
 
 ### test (250 documents)
 
-| System | Leak L (strict) | PHI chars exposed E [95% CI] | Direct ids exposed | Over-masking O | Precision | ms/doc | Round-trip exact |
+| System | Primary: span leak L (strict) | PHI characters left visible E [95% CI] | Direct-identifier characters left visible | Non-PHI text masked O | Span precision / F1 | ms/note | Exact restore (echo model) |
 |---|---|---|---|---|---|---|---|
-| Raw note (today) | 100.0 % | 100.0 % [100.0–100.0] | 100.0 % | 0.0 % | 0.000 | 0.0 | — |
-| NAVAJO 0.1 regex | 76.5 % | 37.6 % [35.6–39.7] | 18.0 % | 1.3 % | 0.451 | 1.36 | 0.0 % |
-| NAVAJO 0.1 + spaCy | 76.9 % | 36.2 % [34.1–38.2] | 16.9 % | 1.8 % | 0.366 | 36.35 | 2.4 % |
-| Presidio (control) | 64.7 % | 27.5 % [25.6–29.6] | 16.5 % | 3.1 % | 0.278 | 53.67 | — |
-| NAVAJO health, no spaCy | 53.7 % | 23.9 % [22.1–25.8] | 10.6 % | 0.9 % | 0.628 | 2.56 | 100.0 % |
-| NAVAJO health | 49.7 % | 20.3 % [18.7–21.9] | 8.7 % | 2.8 % | 0.356 | 58.75 | 100.0 % |
-| Hybrid, no spaCy | 57.5 % | 16.9 % [15.4–18.3] | 5.4 % | 3.5 % | 0.305 | 49.81 | 100.0 % |
-| Hybrid NAVAJO + Presidio | 57.4 % | 17.0 % [15.5–18.4] | 5.6 % | 3.6 % | 0.304 | 105.76 | 100.0 % |
+| Raw note (today) | 100.0 % | 100.0 % [100.0–100.0] | 100.0 % | 0.0 % | 0.000 / 0.000 | 0.0 | — |
+| navajo-egp 0.1, regex | 76.5 % | 38.7 % [36.6–40.7] | 19.5 % | 1.3 % | 0.451 / 0.309 | 1.36 | 0.0 % |
+| navajo-egp 0.1 + spaCy | 76.9 % | 37.1 % [35.0–39.1] | 18.3 % | 1.8 % | 0.366 / 0.283 | 36.35 | 2.4 % |
+| Presidio (control) | 64.7 % | 28.6 % [26.6–30.7] | 18.3 % | 3.1 % | 0.278 / 0.311 | 53.67 | — |
+| Shield default (health pack) | 53.7 % | 24.6 % [22.8–26.5] | 11.5 % | 0.9 % | 0.628 / 0.533 | 2.56 | 100.0 % |
+| Health pack + spaCy | 49.7 % | 21.1 % [19.4–22.7] | 9.5 % | 2.8 % | 0.356 / 0.417 | 58.75 | 100.0 % |
+| Shield max (pack + Presidio) | 57.5 % | 17.3 % [15.9–18.9] | 6.0 % | 3.5 % | 0.305 / 0.355 | 49.81 | 100.0 % |
+| Pack + Presidio + spaCy | 57.4 % | 17.5 % [16.0–19.0] | 6.3 % | 3.6 % | 0.304 / 0.355 | 105.76 | 100.0 % |
 
 ## Pre-registered tests and ablations (paired document bootstrap)
 
 | Comparison | Split | Metric | Difference (points) | 95% CI, seeds 0/1/2 | Reading |
 |---|---|---|---|---|---|
-| H1  NAVAJO 0.1 vs Presidio: NAVAJO 0.1 + spaCy − Presidio (control) | test | E_exposure | +8.62 | [+6.58, +10.61] / [+6.61, +10.73] / [+6.54, +10.81] | A higher (CI above 0) |
-| H3a hybrid vs NAVAJO health: Hybrid NAVAJO + Presidio − NAVAJO health | test | E_exposure | -3.31 | [-4.18, -2.50] / [-4.18, -2.51] / [-4.22, -2.50] | A lower (CI below 0) |
-| H3b hybrid vs Presidio: Hybrid NAVAJO + Presidio − Presidio (control) | test | E_exposure | -10.57 | [-12.33, -8.91] / [-12.27, -8.97] / [-12.21, -9.00] | A lower (CI below 0) |
-| Abl. NAVAJO health vs Presidio: NAVAJO health − Presidio (control) | test | E_exposure | -7.26 | [-9.30, -5.24] / [-9.20, -5.29] / [-9.12, -5.33] | A lower (CI below 0) |
-| Abl. NAVAJO health vs Presidio (direct ids): NAVAJO health − Presidio (control) | test | DI_E_exposure | -7.78 | [-10.77, -4.98] / [-10.54, -5.12] / [-10.51, -5.19] | A lower (CI below 0) |
-| Abl. hybrid vs Presidio (direct ids): Hybrid NAVAJO + Presidio − Presidio (control) | test | DI_E_exposure | -10.86 | [-13.49, -8.56] / [-13.26, -8.63] / [-13.30, -8.62] | A lower (CI below 0) |
-| Abl. hybrid over-masking vs Presidio: Hybrid NAVAJO + Presidio − Presidio (control) | test | O_overmask | +0.41 | [+0.28, +0.58] / [+0.28, +0.58] / [+0.28, +0.58] | A higher (CI above 0) |
-| Abl. spaCy inside hybrid: Hybrid NAVAJO + Presidio − Hybrid, no spaCy | test | E_exposure | +0.11 | [+0.03, +0.20] / [+0.03, +0.20] / [+0.03, +0.21] | A higher (CI above 0) |
-| Abl. NAVAJO inside hybrid, no spaCy: Hybrid, no spaCy − Presidio (control) | test | E_exposure | -10.68 | [-12.44, -9.00] / [-12.40, -9.06] / [-12.32, -9.11] | A lower (CI below 0) |
-| Abl. Presidio inside hybrid, no spaCy: Hybrid, no spaCy − NAVAJO health, no spaCy | test | E_exposure | -7.03 | [-8.47, -5.74] / [-8.43, -5.64] / [-8.44, -5.67] | A lower (CI below 0) |
-| Abl. Presidio inside hybrid, no spaCy (over-masking): Hybrid, no spaCy − NAVAJO health, no spaCy | test | O_overmask | +2.65 | [+2.44, +2.87] / [+2.45, +2.87] / [+2.45, +2.86] | A higher (CI above 0) |
-| Abl. NAVAJO health no spaCy vs Presidio: NAVAJO health, no spaCy − Presidio (control) | test | E_exposure | -3.65 | [-6.08, -1.18] / [-6.00, -1.32] / [-5.92, -1.33] | A lower (CI below 0) |
-| Abl. NAVAJO health no spaCy vs Presidio (over-masking): NAVAJO health, no spaCy − Presidio (control) | test | O_overmask | -2.24 | [-2.50, -1.98] / [-2.49, -1.98] / [-2.49, -1.99] | A lower (CI below 0) |
+| H1  NAVAJO 0.1 vs Presidio: navajo-egp 0.1 + spaCy − Presidio (control) | test | E_exposure | +8.50 | [+6.40, +10.54] / [+6.47, +10.64] / [+6.41, +10.68] | A higher (CI above 0) |
+| H3a hybrid vs NAVAJO health: Pack + Presidio + spaCy − Health pack + spaCy | test | E_exposure | -3.57 | [-4.48, -2.73] / [-4.48, -2.74] / [-4.51, -2.74] | A lower (CI below 0) |
+| H3b hybrid vs Presidio: Pack + Presidio + spaCy − Presidio (control) | test | E_exposure | -11.09 | [-12.95, -9.31] / [-12.89, -9.39] / [-12.84, -9.42] | A lower (CI below 0) |
+| Abl. NAVAJO health vs Presidio: Health pack + spaCy − Presidio (control) | test | E_exposure | -7.52 | [-9.69, -5.39] / [-9.58, -5.50] / [-9.49, -5.51] | A lower (CI below 0) |
+| Abl. NAVAJO health vs Presidio (direct ids): Health pack + spaCy − Presidio (control) | test | DI_E_exposure | -8.76 | [-11.87, -5.77] / [-11.71, -5.99] / [-11.61, -6.00] | A lower (CI below 0) |
+| Abl. hybrid vs Presidio (direct ids): Pack + Presidio + spaCy − Presidio (control) | test | DI_E_exposure | -12.01 | [-14.76, -9.56] / [-14.60, -9.63] / [-14.58, -9.64] | A lower (CI below 0) |
+| Abl. hybrid over-masking vs Presidio: Pack + Presidio + spaCy − Presidio (control) | test | O_overmask | +0.41 | [+0.28, +0.58] / [+0.28, +0.58] / [+0.28, +0.58] | A higher (CI above 0) |
+| Abl. spaCy inside hybrid: Pack + Presidio + spaCy − Shield max (pack + Presidio) | test | E_exposure | +0.15 | [+0.04, +0.27] / [+0.04, +0.27] / [+0.04, +0.27] | A higher (CI above 0) |
+| Abl. NAVAJO inside hybrid, no spaCy: Shield max (pack + Presidio) − Presidio (control) | test | E_exposure | -11.24 | [-13.10, -9.45] / [-13.06, -9.51] / [-12.96, -9.58] | A lower (CI below 0) |
+| Abl. Presidio inside hybrid, no spaCy: Shield max (pack + Presidio) − Shield default (health pack) | test | E_exposure | -7.26 | [-8.66, -5.98] / [-8.66, -5.89] / [-8.65, -5.92] | A lower (CI below 0) |
+| Abl. Presidio inside hybrid, no spaCy (over-masking): Shield max (pack + Presidio) − Shield default (health pack) | test | O_overmask | +2.65 | [+2.44, +2.87] / [+2.45, +2.87] / [+2.45, +2.86] | A higher (CI above 0) |
+| Abl. NAVAJO health no spaCy vs Presidio: Shield default (health pack) − Presidio (control) | test | E_exposure | -3.98 | [-6.50, -1.42] / [-6.40, -1.60] / [-6.34, -1.56] | A lower (CI below 0) |
+| Abl. NAVAJO health no spaCy vs Presidio (over-masking): Shield default (health pack) − Presidio (control) | test | O_overmask | -2.24 | [-2.50, -1.98] / [-2.49, -1.98] / [-2.49, -1.99] | A lower (CI below 0) |
 
 ## Per-label character coverage (test)
 
-| Gold label | n | NAVAJO 0.1 regex | NAVAJO 0.1 + spaCy | Presidio (control) | NAVAJO health | Hybrid NAVAJO + Presidio |
+| Gold label | n | navajo-egp 0.1, regex | navajo-egp 0.1 + spaCy | Presidio (control) | Health pack + spaCy | Pack + Presidio + spaCy |
 |---|---|---|---|---|---|---|
 | TERRITORIO | 437 | 49 % | 49 % | 72 % | 91 % | 97 % |
 | EDAD_SUJETO_ASISTENCIA | 269 | 0 % | 0 % | 1 % | 0 % | 1 % |

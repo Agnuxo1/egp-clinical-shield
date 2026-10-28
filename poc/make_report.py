@@ -17,9 +17,9 @@ sys.path.insert(0, HERE)
 from deid import metrics as M  # noqa: E402
 
 ORDER = ["S0", "S1", "S2", "C1", "N3r", "N3", "H4r", "H4"]
-SHORT = {"S0": "Raw note (today)", "S1": "NAVAJO 0.1 regex", "S2": "NAVAJO 0.1 + spaCy",
-         "C1": "Presidio (control)", "N3r": "NAVAJO health, no spaCy", "N3": "NAVAJO health",
-         "H4r": "Hybrid, no spaCy", "H4": "Hybrid NAVAJO + Presidio"}
+SHORT = {"S0": "Raw note (today)", "S1": "navajo-egp 0.1, regex", "S2": "navajo-egp 0.1 + spaCy",
+         "C1": "Presidio (control)", "N3r": "Shield default (health pack)", "N3": "Health pack + spaCy",
+         "H4r": "Shield max (pack + Presidio)", "H4": "Pack + Presidio + spaCy"}
 # (name, A, B, metric, split): metric(A) - metric(B); below 0 favours A
 TESTS = [
     ("H1  NAVAJO 0.1 vs Presidio", "S2", "C1", "E_exposure", "test"),
@@ -58,7 +58,7 @@ def pct(x):
 
 def table(rows, split):
     out = [f"### {split} ({next(r['n_docs'] for k, r in rows.items() if k.startswith(split + '/'))} documents)", "",
-           "| System | Leak L (strict) | PHI chars exposed E [95% CI] | Direct ids exposed | Over-masking O | Precision | ms/doc | Round-trip exact |",
+           "| System | Primary: span leak L (strict) | PHI characters left visible E [95% CI] | Direct-identifier characters left visible | Non-PHI text masked O | Span precision / F1 | ms/note | Exact restore (echo model) |",
            "|---|---|---|---|---|---|---|---|"]
     for sid in ORDER:
         r = rows.get(f"{split}/{sid}")
@@ -67,7 +67,7 @@ def table(rows, split):
         p, ci = r["point"], r["ci95"]["seed0"]
         rt = f"{100 * r['roundtrip_exact']:.1f} %" if "roundtrip_exact" in r else "—"
         out.append(f"| {SHORT[sid]} | {pct(p['L_leak'])} % | {pct(p['E_exposure'])} % [{pct(ci['E_exposure'][0])}–{pct(ci['E_exposure'][1])}] | "
-                   f"{pct(p['DI_E_exposure'])} % | {pct(p['O_overmask'])} % | {p['P_strict']:.3f} | {r['ms_per_doc']} | {rt} |")
+                   f"{pct(p['DI_E_exposure'])} % | {pct(p['O_overmask'])} % | {p['P_strict']:.3f} / {p['F1_strict']:.3f} | {r['ms_per_doc']} | {rt} |")
     return "\n".join(out)
 
 
@@ -112,7 +112,7 @@ def figures(rows, out_dir, split="test"):
     role = lambda s: raw if s == "S0" else control if s == "C1" else navajo
     sids = [s for s in ORDER if f"{split}/{s}" in rows]
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.6), sharey=True, facecolor=surface)
-    for ax, metric, title in [(axes[0], "E_exposure", "All PHI characters left visible"),
+    for ax, metric, title in [(axes[0], "E_exposure", "PHI characters left visible (all MEDDOCAN labels, incl. age and sex)"),
                               (axes[1], "DI_E_exposure", "Direct-identifier characters left visible")]:
         ax.set_facecolor(surface)
         vals = [rows[f"{split}/{s}"]["point"][metric] * 100 for s in sids]
@@ -135,7 +135,7 @@ def figures(rows, out_dir, split="test"):
         ax.tick_params(colors=muted, length=0)
     from matplotlib.patches import Patch
     fig.legend(handles=[Patch(color=raw, label="No protection"), Patch(color=control, label="Professional control"),
-                        Patch(color=navajo, label="NAVAJO-based")], loc="lower center", ncol=3, frameon=False, fontsize=9)
+                        Patch(color=navajo, label="Built on navajo-egp")], loc="lower center", ncol=3, frameon=False, fontsize=9)
     fig.suptitle(f"MEDDOCAN {split} set: what reaches an external AI model ({rows[f'{split}/S0']['n_docs']} Spanish clinical cases)",
                  fontsize=12, color=ink, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0.07, 1, 0.97))
@@ -161,7 +161,7 @@ def main():
     md += ["## Pre-registered tests and ablations (paired document bootstrap)", "", tests_md, ""]
     if "test" in splits and "test/C1" in rows:
         md += ["## Per-label character coverage (test)", "", per_label(rows, "test"), ""]
-        md += [f"![exposure](fig_exposure_test.png)", ""]
+        md += [f"![exposure](fig_exposure_test.png)", "", "Post-hoc analyses (no system changed): [POSTHOC.md](POSTHOC.md).", ""]
         figures(rows, args.out, "test")
     os.makedirs(args.out, exist_ok=True)
     with open(os.path.join(args.out, "RESULTS.md"), "w", encoding="utf-8", newline="\n") as fh:

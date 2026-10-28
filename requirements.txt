@@ -2,4 +2,4 @@
 spacy==3.8.16
 presidio-analyzer==2.2.364
 es_core_news_lg @ https://github.com/explosion/spacy-models/releases/download/es_core_news_lg-3.8.0/es_core_news_lg-3.8.0-py3-none-any.whl
-matplotlib>=3.8
+matplotlib==3.11.2

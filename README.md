@@ -1,10 +1,10 @@
 # EGP Clinical Shield
 
-**Remove patient identities from a clinical note on the clinician's own computer, ask any AI assistant, and get the answer back with the real names restored.**
+**Pseudonymise a clinical note on the clinician's own computer, ask any AI assistant, and get the answer back with the real names restored.**
 
-Built on [navajo-egp](poc/navajo_egp) (Project NAVAJO, MIT licence), with a new health pack for Spanish clinical documents and a pre-registered evaluation on 1,000 public synthetic clinical cases. Prepared for the MIT Solve 2027 Global Health Challenge.
+Built on [navajo-egp](poc/navajo_egp) (Project NAVAJO, MIT licence) with a new health pack for Spanish clinical documents, and a pre-registered evaluation on 1,000 public synthetic clinical cases. Prepared for the MIT Solve 2027 Global Health Challenge.
 
-> Status: **prototype**. No clinic uses it yet. All numbers below come from synthetic cases, not from real patient notes.
+> Status: **prototype**. No clinic uses it. All numbers come from synthetic cases, not real patient notes. It **reduces** what an AI provider sees; it does not remove all identifiers, and pseudonymised data are still personal data under GDPR.
 
 ## The problem in one paragraph
 
@@ -14,52 +14,62 @@ Frontline clinicians already use AI assistants for letters, summaries and differ
 
 ```
 clinical note ──► mask on the PC (names, IDs, addresses, dates, institutions → ENTITY_A, ID_001 …)
-                   │  ages, sex, symptoms, labs and drugs stay: the model needs them
+                   │  age, sex, symptoms, labs and drugs stay: the model needs them
+                   │  a final check refuses to send if a hard identifier (e-mail, ID, card, IBAN) is still visible
                    ▼
-              any AI assistant (OpenAI, Anthropic, a local model …) sees only placeholders
+              any AI assistant (OpenAI, Anthropic, a local model …) sees the masked text
                    ▼
 answer ◄── restore the real values from an in-memory mapping, then destroy the mapping
 ```
 
-- Runs on a laptop CPU in milliseconds per note; no GPU, no account, no data leaves the machine except the masked text.
-- One line wraps the OpenAI, Anthropic or LangChain client (`EGPMiddleware().wrap(client)`).
-- Masking is reversible and exact: the health pack restores the original text byte for byte.
+```python
+import sys; sys.path.insert(0, "poc")
+from deid.shield import ClinicalShield
+from openai import OpenAI
+
+client = ClinicalShield().wrap(OpenAI())              # default mode: health pack, no ML model
+# client = ClinicalShield(mode="max").wrap(OpenAI())  # maximum protection: health pack + Presidio
+reply = client.chat.completions.create(model="…", messages=[{"role": "user", "content": note}])
+```
+
+- Detection in the default mode takes under 3 ms per note on a 2019 desktop CPU (Ryzen 7 3700X); no GPU and no model. Not yet measured on a laptop.
+- Masking is lossless: with an echo model every test note comes back exactly. With a real model, restoration depends on the model keeping the placeholders, which we have not measured.
 
 ## Results
 
-Pre-registered evaluation on [MEDDOCAN](https://doi.org/10.5281/zenodo.4279323): 1,000 public synthetic Spanish clinical cases with gold annotations (500 train, 250 dev, 250 test), scored with the official MEDDOCAN scorer. The health pack was built on train only; **test was run once, for every system at the same time**. Lower is better everywhere.
+Pre-registered evaluation ([experiments/PREREGISTRO.md](experiments/PREREGISTRO.md)) on [MEDDOCAN](https://doi.org/10.5281/zenodo.4279323): 1,000 synthetic Spanish clinical cases with gold annotations (500 train, 250 dev, 250 test), scored with the official MEDDOCAN scorer. The evaluated health pack (cycle c2) was built on train only; **test was run once, for every system at the same time**. Later analyses on test changed no system. Lower is better everywhere.
 
 ![What reaches an external AI model](docs/fig_exposure_test.png)
 
-| Test set, 250 notes | PHI characters left visible | Direct-identifier characters left visible | Clinical text masked by mistake | Notes with ≥1 direct identifier fully visible | ms per note (CPU) | Exact restore |
+| Test set, 250 notes | Primary: sensitive spans not matched exactly | Sensitive characters left visible* | Direct-identifier characters left visible | Non-sensitive text masked by mistake | Notes with ≥1 direct identifier fully visible | ms per note |
 |---|---|---|---|---|---|---|
-| Raw note (what happens today) | 100 % | 100 % | 0 % | 100 % | — | — |
-| Microsoft Presidio (control) | 31.0 % | 27.0 % | 5.2 % | 97.2 % | 50 | — |
-| navajo-egp 0.1 + spaCy (before this work) | 32.7 % | 17.7 % | 2.2 % | 90.0 % | 32 | 1.6 % |
-| **Health pack, default mode** (no ML model) | **14.5 %** | **5.0 %** | **1.2 %** | **15.6 %** | **2.7** | **100 %** |
-| **Health pack + Presidio, maximum protection** | **10.1 %** | **2.8 %** | 5.6 % | **9.6 %** | 52 | **100 %** |
+| Raw note (what happens today) | 100 % | 100 % | 100 % | 0 % | 100 % | — |
+| Microsoft Presidio (control, default Spanish setup) | 59.3 % | 32.4 % | 28.9 % | 5.2 % | 100 % | 50 |
+| navajo-egp 0.1 + spaCy (before this work) | 68.6 % | 33.8 % | 19.6 % | 2.2 % | 93.6 % | 32 |
+| **Shield, default mode** (health pack, no ML model) | **31.3 %** | **15.1 %** | **5.5 %** | **1.2 %** | **24.8 %** | **2.7** |
+| **Shield, maximum protection** (health pack + Presidio) | 39.1 % | **10.6 %** | **3.2 %** | 5.6 % | **13.6 %** | 52 |
 
-Pre-registered hypotheses ([experiments/PREREGISTRO.md](experiments/PREREGISTRO.md)), with paired bootstrap intervals in [docs/RESULTS.md](docs/RESULTS.md):
+\* All MEDDOCAN labels, including age and sex, which the shield keeps on purpose; whitespace inside spans counts. 95 % bootstrap intervals and paired tests: [docs/RESULTS.md](docs/RESULTS.md).
 
-- **H1, rejected.** navajo-egp 0.1 alone did not beat Presidio: +1.69 points of exposure, 95 % CI [+0.37, +2.91].
-- **H2, rejected narrowly.** The health pack with spaCy cut exposure by 21.7 points on dev, but raised over-masking by 2.07 points; the pre-set limit was 2. The default mode (no spaCy) lowers over-masking instead.
-- **H3, confirmed.** The hybrid exposes less than the health pack alone (−2.30 points) and than Presidio (−20.79 points).
-
-Stress test without the form-like header (62 % of the PHI sits there; [docs/stress](docs/stress)): Presidio 27.5 %, default mode 23.9 % (difference −3.65, CI [−6.08, −1.18]), maximum protection 16.9 %. Much of the margin on full notes comes from the header. Per-note residual risk and an audit of 30 leaks: [docs/RESIDUAL_RISK.md](docs/RESIDUAL_RISK.md). Two bugs found in that audit are fixed in the next cycle (c3), checked on train and dev only; the test numbers above are from the frozen cycle c2.
+- **H1, rejected.** navajo-egp 0.1 alone did not beat Presidio: +1.39 points of exposure, 95 % CI [+0.06, +2.65].
+- **H2, rejected narrowly.** The health pack with spaCy cut exposure by 22.3 points on dev but raised over-masking by 2.07 points; the pre-set limit was 2. The default mode (no spaCy) lowers over-masking instead.
+- **H3, confirmed.** Health pack + Presidio exposes less than the pack alone (−2.43 points) and than Presidio (−21.79).
+- The navajo-egp core detectors account for 6.26 points of the default mode's reduction on full notes and 13.28 on narrative text, beyond the health pack's own patterns ([docs/POSTHOC.md](docs/POSTHOC.md)).
+- **Residual risk is real:** in 24.8 % of notes (default) and 13.6 % (maximum) at least one direct identifier stays fully visible; in 69.2 % and 54.4 % some character of one does ([docs/RESIDUAL_RISK.md](docs/RESIDUAL_RISK.md)).
+- **Stress test without the form-like header** (62 % of the annotated spans sit there, [docs/stress](docs/stress)): Presidio 28.6 %, default 24.6 % (−3.98, CI [−6.50, −1.42]), maximum 17.3 %. Much of the margin on full notes comes from the header.
+- Systems trained on MEDDOCAN reached span F1 0.9749 in the 2019 shared task; the rule-based default mode reaches 0.743 without any training data.
+- Audit corrections (metric definitions, residual-risk count, wrapper integration, a byte-order-mark and an e-mail bug) are logged as E009–E013 in [experiments/LOG.md](experiments/LOG.md). The two bugs are fixed in cycle c3, checked on train and dev only; the test numbers above are from the frozen cycle c2.
 
 ## Reproduce
 
 Linux or macOS with Python 3.13, about 15 minutes on 4 CPU cores:
 
 ```bash
-bash poc/run_server.sh   # creates poc/.venv with the pinned versions, downloads MEDDOCAN (md5 checked) and the official scorer, runs all 8 systems
-poc/.venv/bin/python poc/make_report.py --results poc/results --out docs
-python -m pytest tests   # 42 tests; the core needs no extra packages
+bash poc/run_server.sh   # creates poc/.venv with pinned versions (checked), downloads MEDDOCAN (md5 checked) and the official scorer, runs 8 systems, writes poc/results/report
+python -m pytest tests   # 44 tests; the core needs no extra packages
 ```
 
-Stress test and residual risk: `poc/make_noheader.py`, then `poc/run_eval.py` on the new folder, and `poc/residual_risk.py`.
-
-The pre-registration is in [experiments/PREREGISTRO.md](experiments/PREREGISTRO.md) and every run, including the negative ones, is in [experiments/LOG.md](experiments/LOG.md).
+Stress test, recount and residual risk: `poc/make_noheader.py`, `poc/recount.py`, `poc/residual_risk.py`.
 
 ## What is masked and what is kept
 
@@ -67,24 +77,25 @@ The pre-registration is in [experiments/PREREGISTRO.md](experiments/PREREGISTRO.
 |---|---|
 | Patient, relative and clinician names; record, insurance, episode and licence numbers; phone, fax, e-mail, URLs; streets, postcodes, towns, provinces, countries; hospitals and institutions; dates | Age, sex, kinship words ("su madre"), symptoms, findings, lab values, drugs and doses |
 
-Keeping age and sex follows NAVAJO's EGP design ("67 años → keep, needed for dosing"). MEDDOCAN counts them as PHI, so the all-PHI numbers above penalise this choice; the direct-identifier columns do not include them.
+Keeping age and sex follows NAVAJO's EGP design ("67 años → keep, needed for dosing"). MEDDOCAN counts them as sensitive, so the all-label numbers penalise this choice; the direct-identifier columns do not include them.
 
 ## Limitations
 
-- Synthetic Spanish cases from one corpus with a uniform header template; real notes are messier. The health pack was developed on the training split only, and the test split was run once.
-- Rule- and NER-based detection misses some entities; the evaluation reports what is missed by category.
+- Synthetic Spanish cases from one corpus with a uniform header template; real notes are messier, and the margin over Presidio shrinks on narrative text.
+- Rule-based detection: about one note in four keeps at least one fully visible direct identifier in the default mode. Not a replacement for validated de-identification pipelines.
 - Placeholders protect identity, not every quasi-identifier: a rare disease plus a small town can still point to a person.
-- Not a medical device and not legal advice. A clinic that deploys it still needs its own data-protection impact assessment.
+- How well real AI models keep and use placeholders is not measured yet.
+- Not a medical device and not legal advice. A clinic that deploys it still needs its own data-protection impact assessment and legal basis.
 
 ## Licences
 
-Code: MIT ([LICENSE](LICENSE)). MEDDOCAN data: CC BY 4.0, downloaded at run time, not redistributed. Official MEDDOCAN scorer: MIT. Presidio: MIT. spaCy `es_core_news_lg`: GPL-3.0, downloaded at run time, not redistributed.
+Code: MIT ([LICENSE](LICENSE)). MEDDOCAN data: CC BY 4.0, downloaded at run time, not redistributed (the residual-risk audit quotes 30 short synthetic fragments with attribution). Official MEDDOCAN scorer: MIT. Presidio: MIT. spaCy `es_core_news_lg`: GPL-3.0, downloaded at run time, not redistributed.
 
 ## Citation
 
 ```bibtex
 @software{angulo2026egpclinical,
-  title  = {EGP Clinical Shield: reversible de-identification of clinical notes before AI assistants},
+  title  = {EGP Clinical Shield: reversible pseudonymisation of clinical notes before AI assistants},
   author = {Angulo de Lafuente, Francisco},
   year   = {2026},
   url    = {https://github.com/Agnuxo1/egp-clinical-shield}

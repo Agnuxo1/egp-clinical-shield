@@ -13,3 +13,4 @@ Checked on 2026-10-28. Copies of the key documents are kept in the contest evide
 | Official evaluation script. | PlanTL-SANIDAD/MEDDOCAN-Evaluation-Script, commit 843152c (MIT). |
 | Professional control. | Microsoft Presidio, presidio-analyzer 2.2.364 (MIT). |
 | Spanish NER model. | spaCy es_core_news_lg 3.8.0 (GPL-3.0; downloaded at run time, not redistributed). |
+| Best trained system in the MEDDOCAN 2019 sensitive-span subtask: micro F1 0.9749 (precision 0.9751, recall 0.9747), team NLNDE (Lange et al.). Our default mode: official span F1 0.743 with no training data. | ODESIA results portal, https://portal.odesia.uned.es/en/tarea/sensitive-span-detection ; Lange L., Adel H., Strötgen J., arXiv:2007.01030. |

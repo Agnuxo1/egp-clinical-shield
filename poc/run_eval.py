@@ -43,6 +43,8 @@ def build(names: list[str], health_cycle: str):
             from deid.health import HealthPatterns
             obj = S.Navajo(use_spacy=(n == "N3"), extra=HealthPatterns(health_cycle),
                            name=f"{n}_NAVAJO_HEALTH_{health_cycle}" + ("_NOSPACY" if n == "N3r" else ""))
+        elif n == "P3r":
+            obj = S.PackOnly(health_cycle)
         elif n == "H4":
             obj = S.Union([get("N3"), get("C1")], name=f"H4_HYBRID_{health_cycle}")
         elif n == "H4r":

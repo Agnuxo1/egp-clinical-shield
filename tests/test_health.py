@@ -52,6 +52,37 @@ def test_roundtrip_is_byte_exact():
     assert "Ferrer Molina" not in anon and "4471023" not in anon
 
 
+def test_shield_wraps_openai_style_client():
+    """End-to-end through the SDK wrapper with a fake client: what the model receives, what comes back."""
+    from types import SimpleNamespace
+    from navajo_egp.integrations.openai_wrapper import NavajoOpenAI
+    from deid.shield import ClinicalShield
+
+    received = []
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            prompt = kwargs["messages"][-1]["content"]
+            received.append(prompt)
+            reply = "Summary for " + prompt.split("Apellidos: ")[1].split(".")[0] + ": review HbA1c."
+            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=reply))])
+
+    client = NavajoOpenAI(SimpleNamespace(chat=SimpleNamespace(completions=FakeCompletions())), ClinicalShield())
+    out = client.chat.completions.create(model="any", messages=[{"role": "user", "content": NOTE}])
+    sent = received[0]
+    for secret in ["Lucía", "Ferrer Molina", "4471023", "Zaragoza", "02/02/1961", "976 76 55 00"]:
+        assert secret not in sent, secret
+    assert "65 años" in sent and "metformina 850 mg" in sent
+    assert out.choices[0].message.content == "Summary for Ferrer Molina: review HbA1c."
+
+
+def test_shield_roundtrip_identity_model():
+    from deid.shield import ClinicalShield
+
+    shield = ClinicalShield()
+    assert shield.wrap_llm_call(prompt=NOTE, llm_fn=lambda p: p) == NOTE
+
+
 def test_v01_roundtrip_changes_whitespace():
     # documented limitation of navajo-egp 0.1.0 (experiments/LOG.md E002)
     spans = S.Navajo(use_spacy=False).spans(NOTE)

@@ -10,9 +10,16 @@ VENV="${VENV:-$HERE/.venv}"  # E007 ran with VENV=/home/ai/venvs/mitsolve
 if [ ! -x "$VENV/bin/python" ]; then
   python3 -m venv "$VENV"
   "$VENV/bin/pip" install -q --upgrade pip
-  "$VENV/bin/pip" install -q "spacy==3.8.16" "presidio-analyzer==2.2.364"
+  "$VENV/bin/pip" install -q "spacy==3.8.16" "presidio-analyzer==2.2.364" "matplotlib==3.11.2"
   "$VENV/bin/pip" install -q "https://github.com/explosion/spacy-models/releases/download/es_core_news_lg-3.8.0/es_core_news_lg-3.8.0-py3-none-any.whl"
 fi
+# refuse an existing environment with other versions
+"$VENV/bin/python" - <<'PY'
+from importlib.metadata import version
+want = {"spacy": "3.8.16", "presidio-analyzer": "2.2.364", "es-core-news-lg": "3.8.0", "matplotlib": "3.11.2"}
+bad = {k: version(k) for k in want if version(k) != want[k]}
+assert not bad, f"version mismatch: {bad}"
+PY
 "$VENV/bin/pip" freeze > results/pip_freeze.txt
 
 if [ ! -d data/meddocan ]; then
@@ -31,3 +38,4 @@ SECONDS=0
   --splits train dev test --systems S0 S1 S2 C1 N3 N3r H4 H4r --health c2 --out results --boot 2000 \
   2> results/stderr.txt | tee results/console.txt
 echo "wall_seconds=$SECONDS" >> results/machine.txt
+"$VENV/bin/python" make_report.py --results results --out results/report --boot 2000 > /dev/null
