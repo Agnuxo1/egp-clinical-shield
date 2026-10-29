@@ -63,6 +63,11 @@ Pre-registered evaluation ([experiments/PREREGISTRO.md](experiments/PREREGISTRO.
 
 ## Reproduce
 
+**Independent software check, 29 October 2026:** all 51 offline tests passed
+on the published source. GitHub Actions now repeats these checks on pushes
+and pull requests. They test privacy/integration invariants; they do not
+establish clinical safety or replace the frozen MEDDOCAN benchmark above.
+
 Linux with Python 3.13 (tested on Debian 13), about 25 minutes on 4 CPU cores:
 
 ```bash
